@@ -1,0 +1,87 @@
+*****************************************************
+*        21-JUL-17 01:31:20
+*****************************************************
+CC2K v.7.2 (140319), ScanBas
+IDcode: 00e4-496c-0000-415e-00e4-496c
+Boards: I/O v.1.2, RX#1 v.2.1 (12 kHz BW)
+System Memory: 230 MB, Image Buffer Filling: 1.9 %
+CPU: 933 MHz
+System Disk(s): 120 MB + 2047 / 2047 / 2047 / 1919 MB
+*****************************************************
+SIMULATOR
+The Simulator provides measurements
+for the current configuration
+(gear type, sensors, etc.).
+HELP MENU (Parameter values)
+1: Start/stop Simulation
+0: This help text
+100: This help text
+*****************************************************
+*        21-JUL-17 02:07:08
+*****************************************************
+CC2K v.7.2 (140319), ScanBas
+IDcode: 00e4-496c-0000-415e-00e4-496c
+Boards: I/O v.1.2, RX#1 v.2.1 (12 kHz BW)
+System Memory: 230 MB, Image Buffer Filling: 1.9 %
+CPU: 933 MHz
+System Disk(s): 120 MB + 2047 / 2047 / 2047 / 1919 MB
+*****************************************************
+Starting Simulator...
+BOAT NOISE LEVEL
+Ship noise level referred to hydrophone output
+The values are mean values for the listed frequency bands:
+38200 - 38800 Hz : -67.0 dBV 
+38800 - 40700 Hz : -77.0 dBV (Sensorband, C-6 & C-7)
+40700 - 41600 Hz : -80.0 dBV (Sensorband)
+41600 - 42600 Hz : -80.0 dBV (Sensorband)
+42600 - 43500 Hz : -77.0 dBV (Sensorband)
+43500 - 44900 Hz : -73.0 dBV (Standard TEY)
+44900 - 46400 Hz : -76.0 dBV (Highband TEY)
+46400 - 48000 Hz : -79.0 dBV 
+---------- START of HD statistics ----------
+---------- END of HD statistics ----------
+SENSOR RECEIVING STATISTICS
+Fid 25 C-1 - Ch4 (40810.0) : AL3   2  0  182
+Fid 29 C-4 - Ch4 (41160.0) : AL3   115  107  130
+Fid 31 C-2 - Ch2 (41417.0) : AL3   1  0  182
+Fid 33 C-5 - Ch2 (41690.0) : VQ2   149  14  215
+Fid 35 C-4 - Ch2 (41852.0) : VQ   304  75  125
+Fid 37 C-5 - Ch1 (42024.0) : VQ2   1  0  285
+Fid 39 C-4 - Ch1 (42226.0) : D6   2  0  331
+Fid 44 C-4 - Ch5 (42700.0) : HC   2  0  498
+Fid 50 C-4 - Ch6 (43300.0) : H0   11  2  177
+SENSOR SEARCH CONTINOUS START
+Continous search for sensor pings on all boatcodes and channels
+Use the SensorSearch_Stop command to stop the search.
+Normal sensor decoding will not be done while this function is running
+Fid = 19 BoatCode = 6    Channel = 5    TimeInterval = --------    SNR = 10.5
+Fid = 35 BoatCode = 1/4  Channel = 3/2  TimeInterval = --------    SNR = 19.4
+Fid = 21 BoatCode = 7    Channel = 6    TimeInterval = --------    SNR = 17.6
+Fid = 35 BoatCode = 1/4  Channel = 3/2  TimeInterval = 3.902    SNR = 24.8
+Fid = 27 BoatCode = 3    Channel = 4    TimeInterval = --------    SNR = 13.8
+Fid = 19 BoatCode = 6    Channel = 5    TimeInterval = 7.787    SNR = 11.3
+Fid = 35 BoatCode = 1/4  Channel = 3/2  TimeInterval = 3.939    SNR = 20.7
+Fid = 21 BoatCode = 7    Channel = 6    TimeInterval = 7.840    SNR = 16.9
+Fid = 27 BoatCode = 3    Channel = 4    TimeInterval = 3.900    SNR = 20.2
+Fid = 35 BoatCode = 1/4  Channel = 3/2  TimeInterval = 3.956    SNR = 19.6
+Fid = 27 BoatCode = 3    Channel = 4    TimeInterval = 4.057    SNR = 18.8
+Fid = 21 BoatCode = 7    Channel = 6    TimeInterval = 7.831    SNR = 16.1
+Fid = 35 BoatCode = 1/4  Channel = 3/2  TimeInterval = 7.767    SNR = 24.1
+Fid = 21 BoatCode = 7    Channel = 6    TimeInterval = 3.883    SNR = 18.6
+Fid = 35 BoatCode = 1/4  Channel = 3/2  TimeInterval = 3.934    SNR = 22.9
+Fid = 42 BoatCode = 1    Channel = 5    TimeInterval = --------    SNR = 14.7
+Fid = 5 BoatCode = 7    Channel = 2    TimeInterval = --------    SNR = 16.2
+Fid = 21 BoatCode = 7    Channel = 6    TimeInterval = 3.949    SNR = 15.5
+Fid = 27 BoatCode = 3    Channel = 4    TimeInterval = 11.719    SNR = 12.3
+Fid = 19 BoatCode = 6    Channel = 5    TimeInterval = 19.680    SNR = 16.3
+Sensor search has already been started
+SENSOR SEARCH STOP
+Normal sensor decoding is now resumed
+SPECTROGRAM :
+A spectrogam is made from the active hydrophone and the result is displayed in the
+EchoSounder image. The labels on the time axis are in seconds and the labels
+on the vertical axis are in kHz.
+To restore to normal EchoSounder view, run the Spectrogram_Stop command.
+PLEASE WAIT FOR PROCESSING TO COMPLETE BEFORE SWITCHING SCREEN...
+No wav recording has been started...
+No wav recording has been started...
