@@ -46,20 +46,20 @@ def kbfunc():
 	return msvcrt.getch() if msvcrt.kbhit() else '0'
 
 def main() :
-	if len(sys.argv) != 2:
-		print "supply data file name"
+	if len(sys.argv) != 3:
+		print "supply port and data file name"
 		quit()
-	print sys.argv[0], sys.argv[1]
+	print sys.argv[0], sys.argv[1], sys.argv[2]
 
 
-	FileName= sys.argv[1]
+	FileName= sys.argv[2]
 
 
 #	FileName = "scanmar_rs_trimmed.log"
 
-	port = "com8"
+	port = str(sys.argv[1])
 	Nseconds = 0.02
-	print "reading",FileName
+	print "reading",FileName," from port ",port
 	datagen = DataGen2(FileName)
 	print "trying for serial port ",port
 	try: 
