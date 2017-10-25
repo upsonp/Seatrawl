@@ -133,10 +133,10 @@ class Read_Serial_Stuff(threading.Thread):
         return(str)
 
     def next(self):
-        time.sleep(0.1)
+#        time.sleep(0.1)
         line= ''
-        if self.ser.inWaiting()>80:
-            line = self.ser.readline()
+#        if self.ser.inWaiting()>80:
+        line = self.ser.readline()
 #            line = self.Manual_ReadLine()
         return (line)
 
