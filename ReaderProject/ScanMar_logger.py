@@ -50,11 +50,24 @@ class GraphFrame(wx.Frame):
 
         self.SetBackgroundColour('WHITE')
 
-# these tools proocess the messages
+# these tools process the messages
         self.smn_tools = SMN_TOOLS()
+
+        self.dataDir="C:\ScanMar_data"
+        if not os.path.exists(self.dataDir):
+            os.makedirs(self.dataDir)
+
+        self.ShipTripSet = {"SHIP": "00", "TRIP": "000", "SET": "000"}
+        self.basename = self.make_base_name()
 
 # we need a serial instance to allow the  serial config dialogue to function
         self.ser = serial.Serial()
+        self.comPort = ''
+
+# get the last basename, and serial port parameters
+# if there is no pre-existing file ScanMar.CFG a new one is name with default starting basename
+# for the mission and the serial configuration dialogue is displayed to get setup
+        self.read_cfg()
 
 # Some state variables
         self.Serial_In = None
@@ -65,8 +78,6 @@ class GraphFrame(wx.Frame):
         self.RT_source = False
         self.ARC_source = False
         self.running_a_logfile = False
-
-        self.ShipTripSet = {"SHIP": "00", "TRIP": "000", "SET": "000"}
 
 # sued for elapsed time
         self.StartTime = -1
@@ -86,6 +97,9 @@ class GraphFrame(wx.Frame):
         self.JSON_fp = None
         self.CSV_fp = None
         self.TripLog_fp = None
+
+        self.BQueue = Queue.Queue()
+
 #        self.flash_status_message("OPENING FILE FOR OUTPUT " + self.LogFileName)
 #        print self.BaseName
 
@@ -117,7 +131,7 @@ class GraphFrame(wx.Frame):
 
 #        self.topPanel.SetSizer(sizer)
 
-        self.BQueue = Queue.Queue()
+
 
 # the redraw timer is used to add new data to the plot and update any changes via
 # the on_redraw_timer method
@@ -572,7 +586,8 @@ class GraphFrame(wx.Frame):
 
 
 
-        self.disp_BaseName = RollingDialBox(self.panel, -1, "Ship - Trip - Set","00-999-000", 200,wx.GREEN,wx.HORIZONTAL,afontbigger)
+        self.disp_BaseName = RollingDialBox(self.panel, -1, "Ship - Trip - Set",
+                                            self.basename, 200,wx.GREEN,wx.HORIZONTAL,afontbigger)
 
 #        print self.BaseName
 
@@ -749,7 +764,7 @@ class GraphFrame(wx.Frame):
                 return()
 
         self.setup_new_tow()
-        self.LoggeerRun = True
+        self.LoggerRun = True
         self.LoggerStart_button.Enable(False)
         self.BottomStart_button.Enable(True)
         self.Abort_button.Enable(True)
@@ -788,16 +803,16 @@ class GraphFrame(wx.Frame):
         self.mark_event("OUTWATER")
         self.Warp_text.Enable(False)
         self.Warp_button.Enable(False)
-        self.Shutdown_Data_Source()
+#        self.Shutdown_Data_Source()
 #        self.close_files("SET")
         self.clear_all_buttons()
 
     def on_Abort_button(self, event):
             if self.Confirm_abort_dialogue(event):
                 self.OnBottom = False
-                self.LoggerRun = False
+#                self.LoggerRun = False
                 self.mark_event("ABORT")
-                self.Shutdown_Data_Source()
+#                self.Shutdown_Data_Source()
                 self.abort_logging_file()
                 self.clear_all_buttons()
                 self.setup_new_tow()
@@ -808,14 +823,12 @@ class GraphFrame(wx.Frame):
         new2 = new2 + 1
         new3 = str(new2)
         new4 = new3.strip().zfill(3)
-
-
         print "SET",self.ShipTripSet["SET"],"|new=",new,"|new2=",new2,"|NEW3=",new3,"|new4=",new4,"|"
         if self.Confirm_Increment_dialogue(event,new4):
             self.ShipTripSet["SET"]  = new4
-            self.basename = self.make_base_name()
-            self.disp_BaseName.Data_text.SetValue(self.basename)
+            self.setup_new_tow()
 
+            self.mark_event("NEW_TOW "+self.basename)
 
     def on_start_arc(self,event):
         self.RT_source = False
@@ -968,7 +981,7 @@ class GraphFrame(wx.Frame):
 ######################## Menu things ########################
 
 # #############################################################################
-#  Note:  These Consol messages seem to occur when FileDialog is used on a PC running ViewFinity
+#  Note:  These Console messages seem to occur when FileDialog is used on a PC running ViewFinity
 #    D_Lib: debug    printing    for files[. *] and level[100] is turned on
 #    D_Lib: debug    printing    for files[. *] and level[200] is turned on
 #    D_Lib: debug    printing    for files[. *] and level[300] is turned on
@@ -992,7 +1005,14 @@ class GraphFrame(wx.Frame):
         return(filename)
 
     def make_base_name(self):
-         return(self.ShipTripSet["SHIP"]+self.ShipTripSet["TRIP"]+self.ShipTripSet["SET"])
+         return(self.ShipTripSet["SHIP"]+'-'+self.ShipTripSet["TRIP"]+'-'+self.ShipTripSet["SET"])
+
+    def make_STS(self):
+        self.ShipTripSet["SHIP"] = self.basename[0:2]
+        self.ShipTripSet["TRIP"]= self.basename[3:6]
+        self.ShipTripSet["SET"]= self.basename[7:10]
+
+        print self.ShipTripSet["SHIP"] + '-' + self.ShipTripSet["TRIP"] + '-' + self.ShipTripSet["SET"]
 
          ########################################################
          # dialog to verify abort
@@ -1014,7 +1034,7 @@ class GraphFrame(wx.Frame):
 
 
     def Confirm_start_RT_dialogue(self, event):
-        dlg = wx.MessageDialog(self, "Raeltime data not selected.\nOpen feed from Scanmar and continue?", "RT Feed y/n", wx.YES_NO | wx.ICON_QUESTION)
+        dlg = wx.MessageDialog(self, "Real-time data not selected.\nOpen feed from Scanmar and continue?", "RT Feed y/n", wx.YES_NO | wx.ICON_QUESTION)
         if dlg.ShowModal() == wx.ID_YES:
             return (True)
         else:
@@ -1022,8 +1042,19 @@ class GraphFrame(wx.Frame):
 
     def mark_event(self,flag):
 
-        self.log1.AppendText("  "+"{:<10}".format(flag)+" "+self.BaseName+" "+ self.JDict["DATETIME"]+"  "+self.JDict["DBS"]+"  "+self.JDict["DP_1_H"]["measurement_val"]+"   "+ self.JDict["LAT"]+"  "+self.JDict["LON"])
+#        dttm = str(datetime.now())
+        dt = time.strftime('%Y-%m-%dT%H:%M:%S')
 
+        if self.LoggerRun:
+            msg = "{:<10}".format(flag)+","+self.basename+","+ self.JDict["DATETIME"]+", "+self.JDict["DBS"]+" ,"+\
+              self.JDict["DP_1_H"]["measurement_val"]+",  "+ self.JDict["LAT"]+", "+self.JDict["LON"]
+        else:
+            msg ="  "+"{:<10}".format(flag)+", "+self.basename
+
+        self.log1.AppendText(msg+'\n')
+
+        log_msg  = dt+", "+msg
+        self.write_MissionLog (log_msg)
 
     def abort_logging_file(self):
         pass
@@ -1037,26 +1068,41 @@ class GraphFrame(wx.Frame):
         pass
 
     def setup_new_tow(self):
-        pass
+        self.save_cfg()
+        self.close_files("ALL")
+        self.set_FileNames()
+        self.basename = self.make_base_name()
+        self.disp_BaseName.Data_text.SetValue(self.basename)
+
 
     def set_FileNames(self):
-        self.BaseName = self.make_base_name()
+#        self.basename = self.make_base_name()
 #        self.disp_BaseName.Data_text.SetValue(str(self.BaseName))
 
-        self.disp_BaseName.Data_text.SetValue(str(self.BaseName[0:2]+"-"+self.BaseName[2:5]+"-"+self.BaseName[5:8]))
-        self.CSVFileName = self.BaseName +".csv"
-        self.RAWFileName = self.BaseName +".raw"
-        self.JSONFileName = self.BaseName +".json"
+        self.disp_BaseName.Data_text.SetValue(str(self.basename))
+        self.CSVFileName = self.dataDir+"\\"+self.basename +".csv"
+        self.RAWFileName = self.dataDir+"\\"+self.basename +".raw"
+        self.JSONFileName = self.dataDir+"\\"+self.basename +".json"
+        self.MISIONFileName = self.dataDir+"\\"+self.basename[0:6] +".log"
+        print self.JSONFileName
 
+
+#   ########  the various log files for data and events #################
+    # I'm opening for append and unbuffered,, the append is to get around a repeat of a set#
+    # and avoiding the 'do you want to over write or ... ' issue.. this is temp fix..
+    # the unbuffered is CYA in case of crashes
+#   #####################################################################
     def write_Jdata(self,JDict):
         if self.JSON_fp == None:
-            self.JSON_fp = open(self.JSONFileName, "w")
+            print "opening jfile"
+            self.JSON_fp = open(self.JSONFileName, "a",0)
+        print JDict
         X = json.dumps(JDict)
         self.JSON_fp.write(X+'\n')
 
     def write_CSVdata(self,JDict):
             if self.CSV_fp ==None:
-                self.CSV_fp= open(self.CSVFileName,"w")
+                self.CSV_fp= open(self.CSVFileName,"a",0)
 
                 for ele, val in JDict.iteritems():
                     if isinstance(val, dict):
@@ -1077,20 +1123,25 @@ class GraphFrame(wx.Frame):
 
 #                self.CSVwriter.writerow(JDict.values())
 
-
     def write_RawData(self,Raw_String):
         if  self.RAW_fp == None:
-            self.RAW_fp = open(self.RAWFileName,"w")
+            self.RAW_fp = open(self.RAWFileName,"a",0)
 
         for zz in Raw_String :
             self.RAW_fp.write(str(Raw_String[zz]) + '\n')
 
 
-            
-# Configure serial port, requires our serial instance, make sure port is closed before calling
+
+    def write_MissionLog(self, Event_String):
+        if self.TripLog_fp == None:
+            self.TripLog_fp = open(self.MISIONFileName, "a",0)
+        self.TripLog_fp.write(str(Event_String) + '\n')
+
+    # Configure serial port, requires our serial instance, make sure port is closed before calling
     def on_ser_config(self,event):
 #        self.ser.close()
-        self.read_cfg()
+#        if self.comPort =='':
+#            self.read_cfg()
         dialog_serial_cfg = wxSerialConfigDialog.SerialConfigDialog(None, -1, "",
                 show=wxSerialConfigDialog.SHOW_BAUDRATE|wxSerialConfigDialog.SHOW_FORMAT|wxSerialConfigDialog.SHOW_FLOW,
                 serial=self.ser
@@ -1098,8 +1149,6 @@ class GraphFrame(wx.Frame):
         result = dialog_serial_cfg.ShowModal()
         dialog_serial_cfg.Destroy()
         self.save_cfg()
-
-
 
 # RT start button pressed on main menu RT pull down - note this is the default mode
     def Startup_Data_Source (self):
@@ -1139,18 +1188,6 @@ class GraphFrame(wx.Frame):
         self.MonitorRun = True
         self.DataSource.start()
         self.DataSource.start_data_feed()
-
-
-#        if self.DataSource != None:
-#            #          self.DataSource.flush()
-#            self.DataSource.start_data_feed()
-#            self.StartTime = 0
-
-#        if not self.BaseName != None:
-#            self.flash_status_message("OPENING FILES FOR OUTPUT Prefix = " + self.BaseName)
-#        else:
-#            self.flash_status_message("NO LOGFILE SPECIFIED NOT LOGGING TO FILE")
-#            self.LogFileName = "NOT LOGGING TO FILE"
 
 
 # *****************************************************************
@@ -1194,43 +1231,6 @@ class GraphFrame(wx.Frame):
         self.MonitorRun = False
 
         
-#************************ archieve data ***************************
-    def on_start_arc_old(self):
-        FileName = self.get_file_dialog()  #get filename of logged file
-        if FileName !=None :
-            self.RT_source = False
-            self.ARC_source = True
-#            self.host.set_title('Bongo trace data file= '+FileName, size=8) # label plot
-            menubar = self.GetMenuBar()
-            enabled = menubar.IsEnabled(ID_START_ARC)
-            menubar.Enable(ID_START_ARC,not enabled)
-            enabled = menubar.IsEnabled(ID_STOP_ARC)
-            menubar.Enable(ID_STOP_ARC,not enabled)
-            menubar.EnableTop(1, False)  # lock out RT playback while Archieved running
-
-            self.DataSource = DataGen_que(self,"ARCHIVE",FileName) #Create a data source instance
-            self.MonitorRun = True
-            self.start_data_feed()
-
-
-
-    def on_stop_arc_old (self, event):
-        if self.ARC_source:
-            self.ARC_source = False
-            self.DataSource.close_DataSource()
-            self.MonitorRun = False
-        self.DataSource = None
-
-        menubar = self.GetMenuBar()
-        enabled = menubar.IsEnabled(ID_START_ARC)
-        menubar.Enable(ID_START_ARC,not enabled)
-        enabled = menubar.IsEnabled(ID_STOP_ARC)
-        menubar.Enable(ID_STOP_ARC,not enabled)
-
-#        self.monitor_button.Enable(False)
-#        self.LoggerRun_button.Enable(False)
-
-        menubar.EnableTop(1, True)  # re-enable realtime data option
 
     def on_edit_head(self,event):
         if self.RT_source == True:
@@ -1252,26 +1252,54 @@ class GraphFrame(wx.Frame):
 #            print "AFTER=",self.ShipTripSet
 #            self.hship="LL"
             self.basename = self.make_base_name()
-            self.disp_BaseName.Data_text.SetValue(self.basename)
 
-            self.set_FileNames()
-
+            self.setup_new_tow()
             xx.Destroy()
+
+    def set_default_com_cfg(self):  # Defaults as specified
+        DEFAULT_COM = "COM9"
+        DEFAULT_BAUD = 1200
+
+        self.ser.port = DEFAULT_COM
+        self.ser.baudrate = DEFAULT_BAUD
+        self.ser.bytesize = serial.EIGHTBITS  # number of bits per bytes
+        self.ser.parity = serial.PARITY_NONE  # set parity check: no parity
+        self.ser.stopbits = serial.STOPBITS_ONE  # number of stop bits
+        self.ser.timeout = 5  # timeout block read
+        self.ser.xonxoff = True  # disable software flow control
+        self.ser.rtscts = False  # disable hardware (RTS/CTS) flow control
+        self.ser.dsrdtr = False  # disable hardware (DSR/DTR) flow control
+        self.ser.writeTimeout = 2  # timeout for write
 
     def read_cfg(self):
         try:
             with open('ScanMar.CFG', 'r') as fp:
+                self.basename = fp.readline().rstrip()
+                self.make_STS()
+                self.comPort = fp.readline().rstrip()
+                self.ser.port = self.comPort
+                print self.ser.port +'\n'
                 commsettings = json.load(fp)
-                self.ser.applySettingsDict(commsettings)
+                print commsettings
+                self.ser.apply_settings(commsettings)
             fp.close()
         except:
-            pass
+#            self.set_default_com_cfg()
+            self.set_default_com_cfg()
+            self.on_ser_config(-1)
+
+
 
 
     def save_cfg(self):
-        comsettings = self.ser.getSettingsDict()
-        print comsettings
+        comsettings = self.ser.get_settings()
+        print
+        print self.ser.port, comsettings
         with open('ScanMar.CFG', 'w') as fp:
+            fp.write(self.basename)
+            fp.write('\n')
+            fp.write (self.ser.port)
+            fp.write('\n')
             fp.write(json.dumps(comsettings))
         fp.close()
 
@@ -1295,8 +1323,9 @@ class GraphFrame(wx.Frame):
         if Which == "ALL" :
             try:
                 self.TripLog_fp.close()
+                self.TripLog_fp = None
             except:
-                pass
+                self.TripLog_fp = None
 
         try:
             self.JSON_fp.close()
@@ -1314,10 +1343,15 @@ class GraphFrame(wx.Frame):
             pass
 
 
+        self.JSON_fp = None
+        self.RAW_fp = None
+        self.CSV_fp = None
+
     
     def on_exit(self, event):
         self.redraw_timer.Stop()
         self.Shutdown_Data_Source()
+        self.save_cfg()
         self.close_files("ALL")
 #        self.Close(True)
         self.Destroy()
@@ -1359,7 +1393,7 @@ class GraphFrame(wx.Frame):
 
         info.SetName(TITLE)
         info.SetVersion(VERSION)
-        info.SetDevelopers (["D. Senciall",
+        info.SetDevelopers (["D. Senciall ,  Nov 17 2017",
                              "\nScience Branch",
                              "\n NWAFC, NL region-DFO, Gov. of Canada"])
         info.SetCopyright ("Note: See Source for any 3rd party credits")

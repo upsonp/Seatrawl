@@ -334,15 +334,15 @@ class EntryPanel(wx.Panel):
         #            wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, title = u"SET BASE HEADER", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
 
         self.SetBackgroundColour(wx.NamedColour("GREY25"))
-        self.ship = wx.TextCtrl(self)
-        self.ship.SetBackgroundColour("Yellow")
-        #            self._ship = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 35,-1 ) )
-        self.ship.SetMaxLength(2)
-        self.ship.SetFont(wx.Font(12, 74, 90, 92, False, "Arial"))
-        self._trip = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(57, -1))
+#        self.ship = wx.TextCtrl(self)
+#        self.ship.SetBackgroundColour("Yellow")
+        self._ship = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 35,-1),validator=CharValidator('no-alpha') )
+        self._ship.SetMaxLength(2)
+        self._ship.SetFont(wx.Font(12, 74, 90, 92, False, "Arial"))
+        self._trip = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(57, -1),validator=CharValidator('no-alpha'))
         self._trip.SetMaxLength(3)
         self._trip.SetFont(wx.Font(12, 74, 90, 92, False, "Arial"))
-        self._stn = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(57, -1))
+        self._stn = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(57, -1),validator=CharValidator('no-alpha'))
         self._stn.SetMaxLength(3)
         self._stn.SetFont(wx.Font(12, 74, 90, 92, False, "Arial"))
 
@@ -355,7 +355,7 @@ class EntryPanel(wx.Panel):
 
         sizer = wx.FlexGridSizer(3, 2, 8, 8)
         sizer.Add(wx.StaticText(self, label="SHIP:"), 0, wx.ALIGN_CENTER_VERTICAL)
-        sizer.Add(self.ship, 0, wx.EXPAND)
+        sizer.Add(self._ship, 0, wx.EXPAND)
         sizer.Add(wx.StaticText(self, label="TRIP:"), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self._trip, 0, wx.EXPAND)
         sizer.Add(wx.StaticText(self, label="STN:"), 0, wx.ALIGN_CENTER_VERTICAL)
@@ -372,27 +372,32 @@ class EntryPanel(wx.Panel):
 
         self.SetSizer(msizer)
 
-        self.ship.SetValue("00")
+        self._ship.SetValue("00")
         self._trip.SetValue("000")
         self._stn.SetValue("000")
 
     def SetBase(self, ship, trip, stn):
-        self.ship.SetValue(ship)
+        self._ship.SetValue(ship)
         self._trip.SetValue(trip)
         self._stn.SetValue(stn)
 
     def GetBase(self):
-        return self.ship.GetValue(), self._trip.GetValue(), self._stn.GetValue()
+        return( '{0:0{width}}'.format(int(self._ship.GetValue()), width=2),
+            '{0:0{width}}'.format(int(self._trip.GetValue()), width=3),
+            '{0:0{width}}'.format(int(self._stn.GetValue()), width=3) )
 
     def GetShip(self):
-        print "IN MODEL=" + self.ship.GetValue()
-        return self.ship.GetValue()
+        val = '{0:0{width}}'.format(int(self._ship.GetValue()), width=2)
+        return val
 
     def GetTrip(self):
-        return self._trip.GetValue()
+        val = '{0:0{width}}'.format(int(self._trip.GetValue()), width=3)
+        return val
+
 
     def GetStn(self):
-        return self._stn.GetValue()
+        val = '{0:0{width}}'.format(int(self._stn.GetValue()), width=3)
+        return val
 
 
 

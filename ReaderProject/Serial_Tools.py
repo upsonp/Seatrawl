@@ -40,7 +40,7 @@ class Read_Serial_Stuff(threading.Thread):
         self.queue = queue
 #        self.ser = serial.Serial()  # Create a serial com port access instance
         self.ser = ser
-        self.set_default()
+#        self.set_default()
 #        self.set_settings(settings)
         self.StartTime = 0
 
@@ -53,7 +53,7 @@ class Read_Serial_Stuff(threading.Thread):
 
 
     def set_default (self):  #Defaults as specified
-        DEFAULT_COM = "COM1"
+        DEFAULT_COM = "COM8"
         DEFAULT_BAUD = 9600
 
         self.ser.port = DEFAULT_COM
@@ -133,9 +133,9 @@ class Read_Serial_Stuff(threading.Thread):
         return(str)
 
     def next(self):
-#        time.sleep(0.1)
+#xx        time.sleep(0.1)
         line= ''
-#        if self.ser.inWaiting()>80:
+#xx        if self.ser.inWaiting()>80:
         line = self.ser.readline()
 #            line = self.Manual_ReadLine()
         return (line)
@@ -248,8 +248,8 @@ class DataGen_que(threading.Thread):
         NextGLL = False
         block = OrderedDict ()
         abort_block = False
-        # where going t oscan until we get the full data cycle, delineated by a GLL
-        # try and get some data, if can get it in 30 seconds, some thing is funny
+        # where going to scan until we get the full data cycle, delineated by a GLL
+        # try and get some data, if cant get it in ?? seconds, some thing is funny
         tries = 0
         while tries < 60 :
             if not self.myQueue.empty():

@@ -308,17 +308,17 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
 #        disp_text["GPS"].Data_text["LA"].SetValue(gps_lat_string)
         Sensor_Element = "LAT"
         disp_text[Sensor_Element].update_values(gps_lat_string, "X")
-        JDict[Sensor_Element] = gps_lat_string
+        JDict[Sensor_Element] = str(x.lat[:2] +' '+ '{:>6.6}'.format(x.lat[2:])  +  x.lat_dir)
 
 #        disp_text["GPS"].Data_text["LO"].SetValue(gps_lon_string)
         Sensor_Element = "LON"
         disp_text[Sensor_Element].update_values(gps_lon_string, "X")
-        JDict[Sensor_Element] = gps_lon_string
+        JDict[Sensor_Element] = str(x.lon[1:3] + ' '+ '{:>6.6}'.format(x.lon[3:]) + x.lon_dir)
         Raw_String["GLL"] = x
 
 
-        JDict["Latitude"]= x.latitude
-        JDict["Longitude"] = x.longitude
+        JDict["Latitude"]= str(x.latitude)
+        JDict["Longitude"] = str(x.longitude)
 
     def process_vtg(self,x,disp_text,Raw_String,JDict):
 #        disp_text["GPS"].Data_text["H"].SetValue(str(x.true_track)+"\xb0")
@@ -331,7 +331,7 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
 
         Sensor_Element = "VTG_COG"
         disp_text[Sensor_Element].update_values(str(x.true_track)+"\xb0", "X")
-        JDict[Sensor_Element] = str(str(x.true_track)+"\xb0")
+        JDict[Sensor_Element] = str(str(x.true_track))
 
 
 
