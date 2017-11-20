@@ -34,7 +34,7 @@ ID_START_ARC = wx.NewId()
 ID_STOP_ARC = wx.NewId()
 ID_SER_CONF = wx.NewId()
 
-VERSION = "V1.01 Oct 2017"
+VERSION = "V1.02 nOV 2017"
 TITLE = "ScanMar_Logger"
 
 
@@ -101,7 +101,6 @@ class GraphFrame(wx.Frame):
         self.BQueue = Queue.Queue()
 
 #        self.flash_status_message("OPENING FILE FOR OUTPUT " + self.LogFileName)
-#        print self.BaseName
 
         # Build the display
         self.menubar = wx.MenuBar()
@@ -1029,8 +1028,6 @@ class GraphFrame(wx.Frame):
         self.ShipTripSet["TRIP"]= self.basename[3:6]
         self.ShipTripSet["SET"]= self.basename[7:10]
 
-        print self.ShipTripSet["SHIP"] + '-' + self.ShipTripSet["TRIP"] + '-' + self.ShipTripSet["SET"]
-
          ########################################################
          # dialog to verify abort
 
@@ -1042,7 +1039,7 @@ class GraphFrame(wx.Frame):
             return (False)
 
     def Confirm_Increment_dialogue(self,event,new_set):
-        print  new_set
+
         dlg = wx.MessageDialog(self, "Increment set # to "+new_set+" for next tow?", "Newset", wx.YES_NO | wx.ICON_QUESTION)
         if dlg.ShowModal() == wx.ID_YES:
             return (True)
@@ -1094,7 +1091,6 @@ class GraphFrame(wx.Frame):
         self.basename = self.make_base_name()
         self.disp_BaseName.Data_text.SetValue(self.basename)
 
-
     def set_FileNames(self):
 #        self.basename = self.make_base_name()
 #        self.disp_BaseName.Data_text.SetValue(str(self.BaseName))
@@ -1104,8 +1100,6 @@ class GraphFrame(wx.Frame):
         self.RAWFileName = self.dataDir+"\\"+self.basename +".raw"
         self.JSONFileName = self.dataDir+"\\"+self.basename +".json"
         self.MISIONFileName = self.dataDir+"\\"+self.basename[0:6] +".log"
-        print self.JSONFileName
-
 
 #   ########  the various log files for data and events #################
     # I'm opening for append and unbuffered,, the append is to get around a repeat of a set#
@@ -1114,9 +1108,8 @@ class GraphFrame(wx.Frame):
 #   #####################################################################
     def write_Jdata(self,JDict):
         if self.JSON_fp == None:
-            print "opening jfile"
             self.JSON_fp = open(self.JSONFileName, "a",0)
-        print JDict
+
         X = json.dumps(JDict)
         self.JSON_fp.write(X+'\n')
 
@@ -1259,18 +1252,15 @@ class GraphFrame(wx.Frame):
 
     def on_set_base_header(self,event):
         xx = ShipTrip_Dialog(self)
-#        print "before ",self.ShipTripSet
+
 
         xx.SetBase(self.ShipTripSet["SHIP"],self.ShipTripSet["TRIP"],self.ShipTripSet["SET"])
         res=xx.ShowModal()
         if res == wx.ID_OK:
-#            print "After " , self.ShipTripSet
             self.ShipTripSet["SHIP"] = xx.GetShip()
 #            self.hship = xx.GetShip()
             self.ShipTripSet["TRIP"] = xx.GetTrip()
             self.ShipTripSet["SET"] = xx.GetStn()
-#            print "AFTER=",self.ShipTripSet
-#            self.hship="LL"
             self.basename = self.make_base_name()
 
             self.setup_new_tow()
@@ -1298,9 +1288,7 @@ class GraphFrame(wx.Frame):
                 self.make_STS()
                 self.comPort = fp.readline().rstrip()
                 self.ser.port = self.comPort
-                print self.ser.port +'\n'
                 commsettings = json.load(fp)
-                print commsettings
                 self.ser.apply_settings(commsettings)
             fp.close()
         except:
@@ -1308,13 +1296,8 @@ class GraphFrame(wx.Frame):
             self.set_default_com_cfg()
             self.on_ser_config(-1)
 
-
-
-
     def save_cfg(self):
         comsettings = self.ser.get_settings()
-        print
-        print self.ser.port, comsettings
         with open('ScanMar.CFG', 'w') as fp:
             fp.write(self.basename)
             fp.write('\n')
