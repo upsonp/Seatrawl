@@ -258,8 +258,9 @@ class GraphFrame(wx.Frame):
         self.Abort_button.SetForegroundColour("FOREST GREEN")  # set text back color
         self.Bind(wx.EVT_BUTTON, self.on_Abort_button, self.Abort_button)
 
+        buttonfont_sml = wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.BOLD)
         self.Increment_button = wx.Button(apanel, -1, "Increment\nSet #\n(F12)")
-        self.Increment_button.SetFont(buttonfont)
+        self.Increment_button.SetFont(buttonfont_sml)
         self.Increment_button.SetForegroundColour("FOREST GREEN")  # set text back color
         self.Bind(wx.EVT_BUTTON, self.on_Increment_tow_button,self.Increment_button)
 
@@ -416,6 +417,19 @@ class GraphFrame(wx.Frame):
 #        xxy=OrderedDict([("R",u"Role (Deg)"),("P",u"Pitch (Deg)"),("A",u"Roll-Rattle"),("B",u"Pitch-Rattle")])
 #        self.disp_label2= RollingDialBox_multi_static(self.panel, -1,"---- Log ----", xxy, '0',80,wx.RED,wx.VERTICAL)
 
+
+        self.hbox2 = wx.BoxSizer(wx.HORIZONTAL)
+
+        self.disp_text2 = OrderedDict([("TLT_1_P", ''), ("TLT_1_R", '')])
+
+        x2 = OrderedDict([("TLT_1_P", 'Pitch'), ("TLT_1_R", 'Role')])
+
+        for x in self.disp_text2:
+            self.disp_text2[x] = RollingDialBox_multi(self.panel, -1, x2[x], xx, '0', 50, wx.BLACK, wx.VERTICAL,
+                                                          afontsize)
+                #        self.hbox3.Add(self.disp_label3, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+        for x in self.disp_text2:
+            self.hbox2.Add(self.disp_text2[x], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
 #        self.disp_text2 = OrderedDict([ ("TLT", '')])
 #        xxy =OrderedDict([("R",'r'), ("P", 'p'),( "A", 'a'),( "B", 'b')])
@@ -592,7 +606,7 @@ class GraphFrame(wx.Frame):
 #        print self.BaseName
 
 # add the dictionaries onto the main dictionaries
-#        self.disp_text.update(self.disp_text2)
+        self.disp_text.update(self.disp_text2)
         self.disp_text.update(self.disp_text3)
         self.disp_text.update(self.disp_text4)
         self.disp_text.update(self.disp_text5)
@@ -641,9 +655,9 @@ class GraphFrame(wx.Frame):
 #        self.ETbox = wx.StaticBoxSizer(self.ETBx, wx.HORIZONTAL)
 #        self.ETbox.Add(self.disp_text5["ET"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
-#        self.TLTbx = wx.StaticBox(self.panel,-1,"Tilt")
-#        self.TLTbox = wx.StaticBoxSizer(self.TLTbx, wx.HORIZONTAL)
-#        self.TLTbox.Add(self.hbox2, 0, flag=wx.ALIGN_LEFT | wx.TOP)
+        self.TLTbx = wx.StaticBox(self.panel,-1,"Tilt Sensor")
+        self.TLTbox = wx.StaticBoxSizer(self.TLTbx, wx.HORIZONTAL)
+        self.TLTbox.Add(self.hbox2, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
         self.TSPbx = wx.StaticBox(self.panel,-1,"Trawl Speed")
         self.TSPbox = wx.StaticBoxSizer(self.TSPbx, wx.VERTICAL)
@@ -685,7 +699,7 @@ class GraphFrame(wx.Frame):
         self.LRbox.AddSpacer(4)
         self.LRbox.Add(self.TSbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
         self.LRbox.AddSpacer(4)
-        self.LRbox.Add(self.DBSbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
+        self.LRbox.Add(self.TLTbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
         self.LRbox.AddSpacer(10)
         self.LRbox.Add(self.Increment_button, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
@@ -694,6 +708,8 @@ class GraphFrame(wx.Frame):
         self.LRbox2.Add(self.GPSbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
         self.LRbox2.AddSpacer(4)
         self.LRbox2.Add(self.TSPbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
+        self.LRbox2.AddSpacer(4)
+        self.LRbox2.Add(self.DBSbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
         self.LRbox2.AddSpacer(10)
         self.LRbox2.Add(self.Infobox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
@@ -806,6 +822,7 @@ class GraphFrame(wx.Frame):
 #        self.Shutdown_Data_Source()
 #        self.close_files("SET")
         self.clear_all_buttons()
+        self.on_Increment_tow_button(-1)
 
     def on_Abort_button(self, event):
             if self.Confirm_abort_dialogue(event):
@@ -828,7 +845,7 @@ class GraphFrame(wx.Frame):
             self.ShipTripSet["SET"]  = new4
             self.setup_new_tow()
 
-            self.mark_event("NEW_TOW "+self.basename)
+#            self.mark_event("NEW_TOW ")
 
     def on_start_arc(self,event):
         self.RT_source = False
@@ -1026,7 +1043,7 @@ class GraphFrame(wx.Frame):
 
     def Confirm_Increment_dialogue(self,event,new_set):
         print  new_set
-        dlg = wx.MessageDialog(self, "Increment set # to "+new_set, "Newset", wx.YES_NO | wx.ICON_QUESTION)
+        dlg = wx.MessageDialog(self, "Increment set # to "+new_set+" for next tow?", "Newset", wx.YES_NO | wx.ICON_QUESTION)
         if dlg.ShowModal() == wx.ID_YES:
             return (True)
         else:
@@ -1045,11 +1062,14 @@ class GraphFrame(wx.Frame):
 #        dttm = str(datetime.now())
         dt = time.strftime('%Y-%m-%dT%H:%M:%S')
 
-        if self.LoggerRun:
-            msg = "{:<10}".format(flag)+","+self.basename+","+ self.JDict["DATETIME"]+", "+self.JDict["DBS"]+" ,"+\
+#        if self.LoggerRun:
+        msg = "{:<10}".format(flag)+","+self.basename+","+ self.JDict["DATETIME"]+", "+self.JDict["DBS"]+" ,"+\
               self.JDict["DP_1_H"]["measurement_val"]+",  "+ self.JDict["LAT"]+", "+self.JDict["LON"]
-        else:
-            msg ="  "+"{:<10}".format(flag)+", "+self.basename
+
+        if flag == "WARPENTER":
+                msg = msg + ','+ self.WarpOut
+#        else:
+#            msg ="  "+"{:<10}".format(flag)+", "+self.basename
 
         self.log1.AppendText(msg+'\n')
 
