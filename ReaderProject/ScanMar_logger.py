@@ -34,7 +34,7 @@ ID_START_ARC = wx.NewId()
 ID_STOP_ARC = wx.NewId()
 ID_SER_CONF = wx.NewId()
 
-VERSION = "V1.02 nOV 2017"
+VERSION = "V1.02 Nov 2017"
 TITLE = "ScanMar_Logger"
 
 
@@ -941,7 +941,7 @@ class GraphFrame(wx.Frame):
 
         if  not self.MonitorRun :
             # if we have a data source but are not monitoring
-            # is source is live serial the data is just waste gated
+            # if source is live serial the data is just waste gated
             # if the source is a file the reader pauses
             self.DataSource.pause_data_feed()
             return()
@@ -1236,7 +1236,6 @@ class GraphFrame(wx.Frame):
         menubar.Enable(ID_SER_CONF, True)
 
         if self.DataSource != None:
-            self.DataSource.flush()
             self.DataSource.close_DataSource()
             self.DataSource = None
             self.StartTime = 0

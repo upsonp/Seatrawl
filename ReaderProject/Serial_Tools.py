@@ -40,7 +40,7 @@ class Read_Serial_Stuff(threading.Thread):
         self.queue = queue
 #        self.ser = serial.Serial()  # Create a serial com port access instance
         self.ser = ser
-#        self.set_default()
+        self.set_default()  # other than port and baud
 #        self.set_settings(settings)
         self.StartTime = 0
 
@@ -53,10 +53,10 @@ class Read_Serial_Stuff(threading.Thread):
 
 
     def set_default (self):  #Defaults as specified
-        DEFAULT_COM = "COM8"
-        DEFAULT_BAUD = 9600
+#        DEFAULT_COM = "COM8"
+#        DEFAULT_BAUD = 9600
 
-        self.ser.port = DEFAULT_COM
+#        self.ser.port = DEFAULT_COM
 #        self.ser.baudrate = DEFAULT_BAUD
         self.ser.bytesize = serial.EIGHTBITS  # number of bits per bytes
         self.ser.parity = serial.PARITY_NONE  # set parity check: no parity
@@ -80,6 +80,12 @@ class Read_Serial_Stuff(threading.Thread):
         self.flush()
         return (True)
 
+    def close_Port(self):
+        try:
+            self.ser.close()
+        except:
+            pass
+
     def flush (self):
         if self.ser.isOpen():
             self.ser.flushInput()
@@ -87,18 +93,20 @@ class Read_Serial_Stuff(threading.Thread):
             line = self.ser.readline()  # ensure a full line is in buffer by discarding any stub
 
     def start_data_feed(self):
-        self.wait = False
         self.flush()
+        self.wait = False
 
     def pause_data_feed(self):
         self.wait = True
 
     def shut_down(self):
         self.shutdown = True
+        time.sleep(0.05)   # avoid pulling the rug out to quick
+        self.close_Port()
 
     def run (self):
         if (self.ser.isOpen() == False):
-            self.ser.open()
+            self.open_Port()
 #        self.sio = io.TextIOWrapper(io.BufferedReader(self.ser),newline = '\n')
 #        self.sio.flush()
         self.ser.flush()
@@ -140,10 +148,6 @@ class Read_Serial_Stuff(threading.Thread):
 #            line = self.Manual_ReadLine()
         return (line)
 
-
-    def close_Port(self):
-#        self.parent.flash_status_message("PORT CLOSSING")
-        self.ser.close()
 
     def is_port_open(self):
         return (self.ser.isOpen())
@@ -200,7 +204,7 @@ class Read_File_Stuff(threading.Thread):
     def _close_source(self):
         self.fp.close()
 
-    def flush (self):   # dummy to keep compatible with serail feed
+    def flush (self):   # dummy to keep compatible with serial feed
         pass
 
     def shut_down(self):
@@ -251,7 +255,7 @@ class DataGen_que(threading.Thread):
         # where going to scan until we get the full data cycle, delineated by a GLL
         # try and get some data, if cant get it in ?? seconds, some thing is funny
         tries = 0
-        while tries < 60 :
+        while (tries < 60) and self.feed_on:
             if not self.myQueue.empty():
                 tries = 0
                 line = self.myQueue.get()
@@ -291,9 +295,8 @@ class DataGen_que(threading.Thread):
 
                             else:  # start a new block
                                 self.CurrentBlock["NEWBLOCK"] = False
-
-
-                            self.CurrentBlock["HAVE-GLL"] = True
+                                self.CurrentBlock["HAVE-GLL"] = True
+                                self.CurrentBlock["NEXTGLL"] = msg
                 else:
                     block["OK"] = False
                     block["REASON"] = line
@@ -333,11 +336,12 @@ class DataGen_que(threading.Thread):
                     break
 
     def close_DataSource(self):
-        if self.status != "FINSHED":
+#        if self.status != "FINSHED":
+            self.feed_on = False
             self.flush()
             self.Reader_Thread.shut_down()
             self.parent.flash_status_message("DATA SOURCE STOPPED & CLOSED")
-            self.feed_on = False;
+
             self.shutdown = True
 
     def flush(self):  # the mutex is to make sure it is thread safe since clear is 'under the hood'
@@ -346,10 +350,11 @@ class DataGen_que(threading.Thread):
             self.myQueue.queue.clear()
 
     def pause_data_feed (self):
+        self.feed_on = False
         self.Reader_Thread.pause_data_feed()
         self.parent.flash_status_message("DATA SOURCE PAUSED")
 
     def start_data_feed (self):
-        self.feed_on = True;
         self.Reader_Thread.start_data_feed()
+        self.feed_on = True
         self.parent.flash_status_message("DATA SOURCE (Re)Started")

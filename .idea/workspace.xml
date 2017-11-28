@@ -3,6 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="8747f7ad-bd61-476e-81e3-d1d4b16f2676" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReaderProject/ScanMar.CFG" afterPath="$PROJECT_DIR$/ReaderProject/ScanMar.CFG" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReaderProject/ScanMar_logger.py" afterPath="$PROJECT_DIR$/ReaderProject/ScanMar_logger.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReaderProject/Serial_Tools.py" afterPath="$PROJECT_DIR$/ReaderProject/Serial_Tools.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -12,22 +15,32 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="ScanMar_logger.py" pinned="false" current-in-tab="true">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="ScanMar_logger.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/ReaderProject/ScanMar_logger.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="94">
-              <caret line="1039" column="18" lean-forward="true" selection-start-line="1039" selection-start-column="18" selection-end-line="1039" selection-end-column="18" />
+            <state relative-caret-position="21250">
+              <caret line="1299" column="17" lean-forward="false" selection-start-line="1299" selection-start-column="13" selection-end-line="1299" selection-end-column="17" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Serial_Tools.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ScanMarNmea.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ReaderProject/ScanMarNmea.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-6681">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Serial_Tools.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ReaderProject/Serial_Tools.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="68" column="0" lean-forward="true" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+            <state relative-caret-position="264">
+              <caret line="103" column="63" lean-forward="false" selection-start-line="103" selection-start-column="63" selection-end-line="103" selection-end-column="63" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -43,6 +56,13 @@
       <find>mark_event</find>
       <find>on_Increment_tow_button</find>
       <find>Confirm_Increment_dialogue(</find>
+      <find>print</find>
+      <find>feed_on</find>
+      <find>on_stop_rt</find>
+      <find>Shutdown_Data_Source</find>
+      <find>ser.close</find>
+      <find>open</find>
+      <find>open_Por</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -52,12 +72,13 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/ReaderProject/ScanMar_logger.py" />
+        <option value="$PROJECT_DIR$/ReaderProject/Serial_Tools.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="304" />
-    <option name="y" value="24" />
+    <option name="x" value="367" />
+    <option name="y" value="39" />
     <option name="width" value="1263" />
     <option name="height" value="952" />
   </component>
@@ -153,13 +174,28 @@
       <option name="project" value="LOCAL" />
       <updated>1511189373894</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="after adding back in the tilt sensor">
+      <created>1511189696063</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1511189696063</updated>
+    </task>
+    <task id="LOCAL-00003" summary="removed some print statements">
+      <created>1511201637990</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1511201637990</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="304" y="24" width="1263" height="952" extended-state="0" />
+    <frame x="367" y="39" width="1263" height="952" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17161188" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17161188" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32977462" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -184,17 +220,26 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="after adding back in the tilt sensor" />
-    <option name="LAST_COMMIT_MESSAGE" value="after adding back in the tilt sensor" />
+    <MESSAGE value="removed some print statements" />
+    <option name="LAST_COMMIT_MESSAGE" value="removed some print statements" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/ReaderProject/ScanMar_logger.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ReaderProject/Serial_Tools.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="68" column="0" lean-forward="true" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+        <state relative-caret-position="1037">
+          <caret line="68" column="0" lean-forward="false" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
@@ -203,9 +248,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/ReaderProject/ScanMar_logger.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
-          <caret line="1039" column="18" lean-forward="true" selection-start-line="1039" selection-start-column="18" selection-end-line="1039" selection-end-column="18" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ReaderProject/Serial_Tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1156">
+          <caret line="68" column="0" lean-forward="true" selection-start-line="68" selection-start-column="0" selection-end-line="68" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ReaderProject/ScanMarNmea.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-6681">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ReaderProject/ScanMar_logger.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="21250">
+          <caret line="1299" column="17" lean-forward="false" selection-start-line="1299" selection-start-column="13" selection-end-line="1299" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ReaderProject/Serial_Tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="264">
+          <caret line="103" column="63" lean-forward="false" selection-start-line="103" selection-start-column="63" selection-end-line="103" selection-end-column="63" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
