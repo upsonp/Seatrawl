@@ -259,20 +259,38 @@ class SCMWTD(SCM):
     # the SM2 messages have to be sub processed to get the specific sensor data
     ##########################################################################
 
+#class SMN_TOOLS:  # these are the values are valid to place on the screen
+#    ScreenDict = {
+#        'DVTLAM_1_P': "",
+#        'DVTLAM_1_R': "",
+#        'DVTLAS_1_P': "",
+#        'DVTLAS_1_R': "",
+#        'CVTLAM_1_S': "",
+#        'TSP_1_X': "",
+#        'TSP_1_Y': "",
+#        'TS_5_H': "",
+#        'TS_5_C': "",
+#        'TS_5_O': "",
+#        'TS_5_F': "",
+#        'DP_1_H': "",
+#    }
+
 class SMN_TOOLS:  # these are the values are valid to place on the screen
     ScreenDict = {
-        'DVTLAM_1_P': "",
-        'DVTLAM_1_R': "",
-        'DVTLAS_1_P': "",
-        'DVTLAS_1_R': "",
-        'CVTLAM_1_S': "",
-        'TSP_1_X': "",
-        'TSP_1_Y': "",
-        'TS_5_H': "",
-        'TS_5_C': "",
-        'TS_5_O': "",
-#        'TS_5_F': "",
-        'DP_1_H': "",
+        'DVTLAM_P': "",
+        'DVTLAM_R': "",
+        'DVTLAS_P': "",
+        'DVTLAS_R': "",
+        'CVTLAM_S': "",
+        'TSP_X': "",
+        'TSP_Y': "",
+        'TLT_P': "",
+        'TLT_R': "",
+        'TS_H': "",
+        'TS_C': "",
+        'TS_O': "",
+#        'TS_F': "",
+        'DP_H': "",
     }
     def process_sm2(self,y,disp_text,Raw_String,JDict):
         if y.sensor == 'CVTLAM' and y.measurement_id == '':  # issue with CVTLAM having no id value in test data
@@ -280,7 +298,7 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         elif  y.sensor == "DP" :  # DP does not have an id field so provide a dummy
             y.measurement_id = "H"
 
-        Sensor_Element = y.sensor + '_' + y.sensor_id + '_' + y.measurement_id
+        Sensor_Element = y.sensor +  '_' + y.measurement_id
 
         # bottom contact CON sentence -- we dont have this
 #        if y.sensor =="CON":
@@ -422,7 +440,8 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         if isinstance(msg, SCM):
             if msg.sentence_type in self.GroupDict:
                 if msg.sentence_type == "SM2":
-                    m = msg.sensor + '_' + msg.sensor_id + '_' + msg.measurement_id
+                    m = msg.sensor  + '_' + msg.measurement_id
+#                    m = msg.sensor + '_' + msg.sensor_id + '_' + msg.measurement_id
                     self.current[msg.sentence_type] = msg  # DVTLAS
                     self.current["SENSOR"] = msg.sentence_type  # DVTLAS_1_A
                     self.current["SENSOR_ELEMENT"] = m  # DVTLAS_1_A

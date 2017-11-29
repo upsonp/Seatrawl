@@ -395,11 +395,11 @@ class GraphFrame(wx.Frame):
         self.disp_label= RollingDialBox_multi_static(self.panel, -1,"---- Log ----", timelabel, '0',80,
                                         wx.BLUE,wx.VERTICAL,afontsize)
 
-        self.disp_text=OrderedDict([("DVTLAM_1_P",''),("DVTLAM_1_R",''),("DVTLAS_1_P",''),("DVTLAS_1_R",''),
-                                        ("CVTLAM_1_S",'')])
+        self.disp_text=OrderedDict([("DVTLAM_P",''),("DVTLAM_R",''),("DVTLAS_P",''),("DVTLAS_R",''),
+                                        ("CVTLAM_S",'')])
         xx =OrderedDict([("0",'0'), ("1", '0'),( "2", '0'),( "3", '0'),("4", '0')])
-        x2 = OrderedDict([("DVTLAM_1_P", 'Port-Pitch'), ("DVTLAM_1_R", 'Port-Roll'), ("DVTLAS_1_P",'Stbd-Pitch'),
-                                        ("DVTLAS_1_R",'Stbd-Roll'),("CVTLAM_1_S", 'Wing-Spread')])
+        x2 = OrderedDict([("DVTLAM_P", 'Port-Pitch'), ("DVTLAM_R", 'Port-Roll'), ("DVTLAS_P",'Stbd-Pitch'),
+                                        ("DVTLAS_R",'Stbd-Roll'),("CVTLAM_S", 'Wing-Spread')])
 
 
 # build the data boxes,,  access as disp_text["DVTLAM"].Data_text["R"].SetValue(xxxx)
@@ -419,9 +419,9 @@ class GraphFrame(wx.Frame):
 
         self.hbox2 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.disp_text2 = OrderedDict([("TLT_1_P", ''), ("TLT_1_R", '')])
+        self.disp_text2 = OrderedDict([("TLT_P", ''), ("TLT_R", '')])
 
-        x2 = OrderedDict([("TLT_1_P", 'Pitch'), ("TLT_1_R", 'Role')])
+        x2 = OrderedDict([("TLT_P", 'Pitch'), ("TLT_R", 'Role')])
 
         for x in self.disp_text2:
             self.disp_text2[x] = RollingDialBox_multi(self.panel, -1, x2[x], xx, '0', 50, wx.BLACK, wx.VERTICAL,
@@ -440,9 +440,9 @@ class GraphFrame(wx.Frame):
 
         self.hbox3 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.disp_text3 = OrderedDict([ ("TSP_1_X", ''),("TSP_1_Y",'')])
+        self.disp_text3 = OrderedDict([ ("TSP_X", ''),("TSP_Y",'')])
 
-        x2 = OrderedDict([("TSP_1_X", 'Cross'), ("TSP_1_Y", 'Along')])
+        x2 = OrderedDict([("TSP_X", 'Cross'), ("TSP_Y", 'Along')])
 
         for x in self.disp_text3 :
             self.disp_text3[x] = RollingDialBox_multi(self.panel, -1, x2[x],xx, '0',50,wx.BLACK,wx.VERTICAL,afontsize)
@@ -453,8 +453,8 @@ class GraphFrame(wx.Frame):
 
         self.hbox4 = wx.BoxSizer(wx.HORIZONTAL)
 
-        self.disp_text4 = OrderedDict([ ("TS_5_H", ''),("TS_5_O",''),("TS_5_C",''),("DP_1_H",'')])
-        x2 = OrderedDict([("TS_5_H", 'Height'), ("TS_5_O", 'Opening'), ("TS_5_C", 'Clear'),("DP_1_H",'TrawlDepth')])
+        self.disp_text4 = OrderedDict([ ("TS_H", ''),("TS_O",''),("TS_C",''),("DP_H",'')])
+        x2 = OrderedDict([("TS_H", 'Height'), ("TS_O", 'Opening'), ("TS_C", 'Clear'),("DP_H",'TrawlDepth')])
         for x in self.disp_text4:
             self.disp_text4[x] = RollingDialBox_multi(self.panel, -1, x2[x], xx, '0', 60, wx.BLACK, wx.VERTICAL,afontsize)
             #        self.hbox3.Add(self.disp_label3, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
@@ -1061,7 +1061,7 @@ class GraphFrame(wx.Frame):
 
 #        if self.LoggerRun:
         msg = "{:<10}".format(flag)+","+self.basename+","+ self.JDict["DATETIME"]+", "+self.JDict["DBS"]+" ,"+\
-              self.JDict["DP_1_H"]["measurement_val"]+",  "+ self.JDict["LAT"]+", "+self.JDict["LON"]
+              self.JDict["DP_H"]["measurement_val"]+",  "+ self.JDict["LAT"]+", "+self.JDict["LON"]
 
         if flag == "WARPENTER":
                 msg = msg + ','+ self.WarpOut
