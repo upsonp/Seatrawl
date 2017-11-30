@@ -78,6 +78,7 @@ class GraphFrame(wx.Frame):
         self.RT_source = False
         self.ARC_source = False
         self.running_a_logfile = False
+        self.HAVE_DATA = False
 
 # sued for elapsed time
         self.StartTime = -1
@@ -90,8 +91,46 @@ class GraphFrame(wx.Frame):
 #        self.BaseName = self.make_base_name()
 
         self.JDict = OrderedDict()
-        self.JDict["Latitude"] = ''
-        self.JDict["Longitude"] = ''
+        self.JDict["DATETIME"] = ""
+        self.JDict["Lat"] = ""
+        self.JDict["Long"] = ""
+        self.JDict["LAT"] = ""
+        self.JDict["LON"] = ""
+
+        self.JDict["VTG_SPD"] = ""
+        self.JDict["VTG_COG"] = ""
+        self.JDict["DBS"] = ""
+
+        self.JDict['DVTLAM_P']= ""
+        self.JDict['DVTLAM_R']= ""
+        self.JDict['DVTLAM_A']= ""
+        self.JDict['DVTLAM_B']= ""
+        self.JDict['DVTLAM_S']= ""
+        self.JDict['DVTLAS_P']= ""
+        self.JDict['DVTLAS_R']= ""
+        self.JDict['DVTLAS_A']= ""
+        self.JDict['DVTLAS_B']= ""
+        self.JDict['CVTLAM_S']= ""
+        self.JDict['TSP_X']= ""
+        self.JDict['TSP_Y']= ""
+        self.JDict['TLT_P']= ""
+        self.JDict['TLT_R']= ""
+        self.JDict['TLT_A']= ""
+        self.JDict['TLT_B']= ""
+        self.JDict['TS_H']= ""
+        self.JDict['TS_C']= ""
+        self.JDict['TS_O']= ""
+        self.JDict['TS_F']= ""
+        self.JDict['DP_H']= ""
+        self.JDict['WLPS']= ""
+        self.JDict['WLPO']= ""
+        self.JDict['WLSS']= ""
+        self.JDict['WLSO']= ""
+        self.JDict['WTP']= ""
+        self.JDict['WTS']= ""
+
+
+
 
         self.RAW_fp = None
         self.JSON_fp = None
@@ -291,7 +330,7 @@ class GraphFrame(wx.Frame):
         self.WRPbox.Add(self.warpbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
 
-        self.LoggerStart_button.Enable(True)
+        self.LoggerStart_button.Enable(False)
         self.LoggerEnd_button.Enable(False)
         self.Warp_button.Enable(False)
 
@@ -771,12 +810,15 @@ class GraphFrame(wx.Frame):
     # else do nothing; if user wants play back they can choose it from main menu
     def on_LoggerStart_button(self, event):
 
-        if not self.RT_source and not self.ARC_source:
-            if self.Confirm_start_RT_dialogue(-1):
-                self.on_start_rt(-1)
-#                self.Startup_Data_Source()
-            else:
-                return()
+#        if not self.RT_source and not self.ARC_source:
+  #          if self.Confirm_start_RT_dialogue(-1):
+  #              self.on_start_rt(-1)
+  #              self.Confirm_start_RT_dialogue(-1)
+
+
+#                self.on_start_rt(-1)
+#            else:
+#                return()
 
         self.setup_new_tow()
         self.LoggerRun = True
@@ -850,6 +892,7 @@ class GraphFrame(wx.Frame):
         self.RT_source = False
         self.ARC_source = True
         self.Startup_Data_Source()
+        self.LoggerStart_button.Enable(True)
 
     def on_stop_arc(self,event):
         self.RT_source = False
@@ -861,6 +904,9 @@ class GraphFrame(wx.Frame):
         self.RT_source = True
         self.ARC_source = False
         self.Startup_Data_Source()
+
+        self.LoggerStart_button.Enable(True)
+
 
     def on_stop_rt(self, event):
         self.RT_source = False
@@ -950,6 +996,7 @@ class GraphFrame(wx.Frame):
             if not self.BQueue.empty():
                 tries = 0
                 block = self.BQueue.get()
+                self.HAVE_DATA = True
             else:
 #                print "Empty Queue"
                 return()
@@ -1048,8 +1095,8 @@ class GraphFrame(wx.Frame):
 
 
     def Confirm_start_RT_dialogue(self, event):
-        dlg = wx.MessageDialog(self, "Real-time data not selected.\nOpen feed from Scanmar and continue?", "RT Feed y/n", wx.YES_NO | wx.ICON_QUESTION)
-        if dlg.ShowModal() == wx.ID_YES:
+        dlg = wx.MessageDialog(self, "Real-time data not Running.\nOpening feed from Scanmar", "When data seen on screen please retry IN WATER button", wx.OK | wx.ICON_QUESTION)
+        if dlg.ShowModal() == wx.ID_OK:
             return (True)
         else:
             return (False)
@@ -1077,7 +1124,10 @@ class GraphFrame(wx.Frame):
         pass
 
     def clear_all_buttons(self):
-        self.LoggerStart_button.Enable(True)
+        if self.RT_source  == True  or self.ARC_source == True:
+            self.LoggerStart_button.Enable(True)
+        else:
+            self.LoggerStart_button.Enable(False)
         self.BottomStart_button.Enable(False)
         self.BottomEnd_button.Enable(False)
         self.LoggerEnd_button.Enable(False)
@@ -1118,20 +1168,31 @@ class GraphFrame(wx.Frame):
                 self.CSV_fp= open(self.CSVFileName,"a",0)
 
                 for ele, val in JDict.iteritems():
-                    if isinstance(val, dict):
-                        for k, v in val.items():
-                            self.CSV_fp.write(k + ',', )
+                    if ele == "DATETIME":
+                        self.CSV_fp.write('{:>10}'.format('DATE') +'\t'+ '{:>10}'.format('TIME')+'\t', )
+                    elif ele == "LAT" or ele == "LON" :
+                        self.CSV_fp.write('{:>10}'.format(ele+'_D')+'\t'+'{:>10}'.format(ele+'_M')+'\t', )
                     else:
-                        self.CSV_fp.write(ele + ',', )
+                        self.CSV_fp.write('{:>10}'.format(ele) + '\t',)
+                    if isinstance(val, dict):
+                            self.CSV_fp.write('{:>10}'.format('QF') +'\t'+ '{:>10}'.format('VA')+'\t', )
+
 #                self.CSVwriter = csv.writer(self.CSV_fp)
 #                self.CSVwriter.writerow(JDict.keys())
             else:
                 for ele, val in JDict.iteritems():
                     if isinstance(val, dict):
                         for k, v in val.items():
-                            self.CSV_fp.write(str(v) + ',', )
+                            self.CSV_fp.write('{:>10}'.format(v) + '\t', )
                     else:
-                        self.CSV_fp.write(str(val) + ',', )
+                        if ele == "DATETIME":
+                            DT = val.split()
+                            self.CSV_fp.write('{:>10}'.format(DT[0])+'\t'+ '{:>10}'.format(DT[1])+'\t', )
+                        elif  ele == "LAT"  or  ele == "LON":
+                                L = val.split()
+                                self.CSV_fp.write('{:>10}'.format(L[0]) + '\t' + '{:>10}'.format(L[1]) + '\t', )
+                        else:
+                            self.CSV_fp.write('{:>10}'.format(val) + '\t', )
             self.CSV_fp.write('\n')
 
 #                self.CSVwriter.writerow(JDict.values())

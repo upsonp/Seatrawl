@@ -335,8 +335,8 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         Raw_String["GLL"] = x
 
 
-        JDict["Latitude"]= str(x.latitude)
-        JDict["Longitude"] = str(x.longitude)
+        JDict["Lat"]= '{:>7.6}'.format(x.latitude)
+        JDict["Long"] = '{:>7.6}'.format(x.longitude)
 
     def process_vtg(self,x,disp_text,Raw_String,JDict):
 #        disp_text["GPS"].Data_text["H"].SetValue(str(x.true_track)+"\xb0")
@@ -382,15 +382,15 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
 #        disp_text["WP"].Data_text["LEN"].SetValue(str(x.wireout))
 #        disp_text["WP"].Data_text["SPD"].SetValue(str(x.wirespeed))
         Raw_String["WLP"] = x
-        JDict["WLPT"] = str(x.wirespeed)
-        JDict["WLPT"] = str(x.wireout)
+        JDict["WLPS"] = str(x.wirespeed)
+        JDict["WLPO"] = str(x.wireout)
 
     def process_wls(self, x, disp_text, Raw_String, JDict):
 #        disp_text["WS"].Data_text["LEN"].SetValue(str(x.wireout))
 #        disp_text["WS"].Data_text["SPD"].SetValue(str(x.wirespeed))
         Raw_String["WLS"] = x
-        JDict["WLST"] = str(x.wirespeed)
-        JDict["WLST"] = str(x.wireout)
+        JDict["WLSS"] = str(x.wirespeed)
+        JDict["WLSO"] = str(x.wireout)
 
     def process_wts(self, x, disp_text, Raw_String, JDict):
 #        disp_text["WS"].Data_text["LEN"].SetValue(str(x.wiretension))
