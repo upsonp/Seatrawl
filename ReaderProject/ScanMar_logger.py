@@ -217,11 +217,11 @@ class GraphFrame(wx.Frame):
         menu_option = wx.Menu()
         m_basehead = menu_option.Append(-1, "Set ship trip stn", "shiptripstn")
         self.Bind(wx.EVT_MENU, self.on_set_base_header, m_basehead)
-        menu_option.AppendSeparator()
-        m_edithead = menu_option.Append(-1, "Edit File Header", "Edit File Header")
-        self.Bind(wx.EVT_MENU, self.on_edit_head, m_edithead)
-        menu_option.AppendSeparator()
-        menu_option.AppendSeparator()
+#        menu_option.AppendSeparator()
+#        m_edithead = menu_option.Append(-1, "Edit File Header", "Edit File Header")
+#        self.Bind(wx.EVT_MENU, self.on_edit_head, m_edithead)
+#        menu_option.AppendSeparator()
+#       menu_option.AppendSeparator()
 #        self.SPW_tick = menu_option.Append (-1,"Show Port Wire","Show Port Wire",kind=wx.ITEM_CHECK)
 #        self.Bind(wx.EVT_MENU, self.on_port_wire, self.SPW_tick)
 #        self.SPW_tick.SetValue(True)
@@ -236,7 +236,7 @@ class GraphFrame(wx.Frame):
         self.menubar.Append(menu_file, "&File")
         self.menubar.Append(menu_realtime, "RealTime")
         self.menubar.Append(menu_archived, "Archived")
-        self.menubar.Append(menu_option, "Options")
+        self.menubar.Append(menu_option, "Trip Optioms")
         self.menubar.Append(menu_help, "Help")
         self.SetMenuBar(self.menubar)
 
@@ -296,11 +296,11 @@ class GraphFrame(wx.Frame):
         self.Abort_button.SetForegroundColour("FOREST GREEN")  # set text back color
         self.Bind(wx.EVT_BUTTON, self.on_Abort_button, self.Abort_button)
 
-        buttonfont_sml = wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.BOLD)
-        self.Increment_button = wx.Button(apanel, -1, "Increment\nSet #\n(F12)")
-        self.Increment_button.SetFont(buttonfont_sml)
-        self.Increment_button.SetForegroundColour("FOREST GREEN")  # set text back color
-        self.Bind(wx.EVT_BUTTON, self.on_Increment_tow_button,self.Increment_button)
+#        buttonfont_sml = wx.Font(12, wx.DECORATIVE, wx.ITALIC, wx.BOLD)
+#        self.Increment_button = wx.Button(apanel, -1, "Increment\nSet #\n(F12)")
+#        self.Increment_button.SetFont(buttonfont_sml)
+#        self.Increment_button.SetForegroundColour("FOREST GREEN")  # set text back color
+#        self.Bind(wx.EVT_BUTTON, self.on_Increment_tow_button,self.Increment_button)
 
 
         self.warpbox = wx.BoxSizer(wx.VERTICAL)
@@ -639,7 +639,7 @@ class GraphFrame(wx.Frame):
 
 
         self.disp_BaseName = RollingDialBox(self.panel, -1, "Ship - Trip - Set",
-                                            self.basename, 200,wx.GREEN,wx.HORIZONTAL,afontbigger)
+                                            self.basename, 200,"FOREST GREEN",wx.HORIZONTAL,afontbigger)
 
 #        print self.BaseName
 
@@ -738,8 +738,8 @@ class GraphFrame(wx.Frame):
         self.LRbox.Add(self.TSbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
         self.LRbox.AddSpacer(4)
         self.LRbox.Add(self.TLTbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
-        self.LRbox.AddSpacer(10)
-        self.LRbox.Add(self.Increment_button, 0, flag=wx.ALIGN_LEFT | wx.TOP)
+#        self.LRbox.AddSpacer(10)
+#        self.LRbox.Add(self.Increment_button, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
         self.LRbox2 = wx.BoxSizer(wx.HORIZONTAL)
         self.LRbox2.AddSpacer(4)
@@ -810,22 +810,14 @@ class GraphFrame(wx.Frame):
     # else do nothing; if user wants play back they can choose it from main menu
     def on_LoggerStart_button(self, event):
 
-#        if not self.RT_source and not self.ARC_source:
-  #          if self.Confirm_start_RT_dialogue(-1):
-  #              self.on_start_rt(-1)
-  #              self.Confirm_start_RT_dialogue(-1)
-
-
-#                self.on_start_rt(-1)
-#            else:
-#                return()
-
         self.setup_new_tow()
+
         self.LoggerRun = True
         self.LoggerStart_button.Enable(False)
         self.BottomStart_button.Enable(True)
         self.Abort_button.Enable(True)
         self.mark_event("INWATER")
+#        self.disp_BaseName.Data_text.SetForegroundColour("RED")
 
     def on_BottomStart_button(self, event):
         self.flash_status_message("BOTTOM TOW STARTED at",time.time())
@@ -875,16 +867,18 @@ class GraphFrame(wx.Frame):
                 self.clear_all_buttons()
                 self.setup_new_tow()
 
+
     def on_Increment_tow_button(self, event):
         new= self.ShipTripSet["SET"]
         new2 = int(new)
-        new2 = new2 + 1
-        new3 = str(new2)
+        new2a = new2 + 1
+        new3 = str(new2a)
         new4 = new3.strip().zfill(3)
         print "SET",self.ShipTripSet["SET"],"|new=",new,"|new2=",new2,"|NEW3=",new3,"|new4=",new4,"|"
-        if self.Confirm_Increment_dialogue(event,new4):
-            self.ShipTripSet["SET"]  = new4
-            self.setup_new_tow()
+#        if self.Confirm_Increment_dialogue(event,new4):
+        self.ShipTripSet["SET"]  = new4
+        self.setup_new_tow()
+        self.ShowMessage ("LOGGING FINISHED FOR SET # "+str(new2)+"\nREADY FOR NEXT SET# "+new4, "Next Set Is..",-1)
 
 #            self.mark_event("NEW_TOW ")
 
@@ -1140,6 +1134,7 @@ class GraphFrame(wx.Frame):
         self.set_FileNames()
         self.basename = self.make_base_name()
         self.disp_BaseName.Data_text.SetValue(self.basename)
+#        self.disp_BaseName.Data_text.SetForegroundColour()
 
     def set_FileNames(self):
 #        self.basename = self.make_base_name()
@@ -1250,6 +1245,7 @@ class GraphFrame(wx.Frame):
                 return()
 
 
+
         enabled = menubar.IsEnabled(ID_START)  # reverse the menu items
         menubar.Enable(ID_START,not enabled)
         enabled = menubar.IsEnabled(ID_STOP)
@@ -1262,6 +1258,8 @@ class GraphFrame(wx.Frame):
         self.MonitorRun = True
         self.DataSource.start()
         self.DataSource.start_data_feed()
+
+        self.ShowMessage ("PLease Wait for data to display\nbefore Starting Logging ", "PLease wait..",-1)
 
 
 # *****************************************************************
@@ -1434,9 +1432,9 @@ class GraphFrame(wx.Frame):
     def message_box (self,message):
         result= wx.MessageBox (message,style=wx.CENTER|wx.OK)
 
-    def ShowMessage2(self, event):
-        dial = wx.MessageDialog(None, 'Error loading file', 'Error', 
-        wx.OK | wx.ICON_ERROR)
+    def ShowMessage(self,msg,msg_title, event):
+        dial = wx.MessageDialog(None, msg, msg_title,
+        wx.OK | wx.ICON_INFORMATION)
         dial.ShowModal()  
 
     def OnAbout(self,event):
