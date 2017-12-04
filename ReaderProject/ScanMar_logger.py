@@ -1159,36 +1159,40 @@ class GraphFrame(wx.Frame):
         self.JSON_fp.write(X+'\n')
 
     def write_CSVdata(self,JDict):
+            flag = ""
             if self.CSV_fp ==None:
                 self.CSV_fp= open(self.CSVFileName,"a",0)
 
                 for ele, val in JDict.iteritems():
                     if ele == "DATETIME":
-                        self.CSV_fp.write('{:>10}'.format('DATE') +'\t'+ '{:>10}'.format('TIME')+'\t', )
+                        self.CSV_fp.write('{:>10}'.format('DATE') +','+ '{:>10}'.format('TIME')+',', )
                     elif ele == "LAT" or ele == "LON" :
-                        self.CSV_fp.write('{:>10}'.format(ele+'_D')+'\t'+'{:>10}'.format(ele+'_M')+'\t', )
+                        self.CSV_fp.write('{:>10}'.format(ele+'_D')+','+'{:>10}'.format(ele+'_M')+',', )
                     else:
-                        self.CSV_fp.write('{:>10}'.format(ele) + '\t',)
+                        self.CSV_fp.write('{:>10}'.format(ele) + ',',)
                     if isinstance(val, dict):
-                            self.CSV_fp.write('{:>10}'.format('QF') +'\t'+ '{:>10}'.format('VA')+'\t', )
+                            self.CSV_fp.write('{:>10}'.format('QF') +','+ '{:>10}'.format('VA')+',', )
 
 #                self.CSVwriter = csv.writer(self.CSV_fp)
 #                self.CSVwriter.writerow(JDict.keys())
+                    flag = '{:>10}'.format("OnBottom")
             else:
                 for ele, val in JDict.iteritems():
                     if isinstance(val, dict):
                         for k, v in val.items():
-                            self.CSV_fp.write('{:>10}'.format(v) + '\t', )
+                            self.CSV_fp.write('{:>10}'.format(v) + ',', )
                     else:
                         if ele == "DATETIME":
                             DT = val.split()
-                            self.CSV_fp.write('{:>10}'.format(DT[0])+'\t'+ '{:>10}'.format(DT[1])+'\t', )
+                            self.CSV_fp.write('{:>10}'.format(DT[0])+','+ '{:>10}'.format(DT[1])+',', )
                         elif  ele == "LAT"  or  ele == "LON":
                                 L = val.split()
-                                self.CSV_fp.write('{:>10}'.format(L[0]) + '\t' + '{:>10}'.format(L[1]) + '\t', )
+                                self.CSV_fp.write('{:>10}'.format(L[0]) + ',' + '{:>10}'.format(L[1]) + ',', )
                         else:
-                            self.CSV_fp.write('{:>10}'.format(val) + '\t', )
-            self.CSV_fp.write('\n')
+                            self.CSV_fp.write('{:>10}'.format(val) + ',', )
+                flag = '{:>10}'.format('B') if self.OnBottom else '{:>10}'.format('W')
+
+            self.CSV_fp.write(flag+'\n')
 
 #                self.CSVwriter.writerow(JDict.values())
 
@@ -1204,6 +1208,10 @@ class GraphFrame(wx.Frame):
     def write_MissionLog(self, Event_String):
         if self.TripLog_fp == None:
             self.TripLog_fp = open(self.MISIONFileName, "a",0)
+            msg = "PC CLOCK          ,  EVENT     , SHIPTRIPSET  ,     FEED ClOCK   , SNDER, NetSND,   LAT    ,    LONG,  WARP"
+
+            self.TripLog_fp.write(msg + '\n')
+
         self.TripLog_fp.write(str(Event_String) + '\n')
 
     # Configure serial port, requires our serial instance, make sure port is closed before calling
@@ -1259,7 +1267,7 @@ class GraphFrame(wx.Frame):
         self.DataSource.start()
         self.DataSource.start_data_feed()
 
-        self.ShowMessage ("PLease Wait for data to display\nbefore Starting Logging ", "PLease wait..",-1)
+        self.ShowMessage ("Opening Data port\nPlease Wait for data to display\nbefore Starting Logging ", "PLease wait..",-1)
 
 
 # *****************************************************************
