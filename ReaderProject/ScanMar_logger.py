@@ -267,7 +267,7 @@ class GraphFrame(wx.Frame):
     def populate_button_strip(self,apanel):
         buttonfont = wx.Font(18, wx.DECORATIVE, wx.ITALIC, wx.BOLD)
 
-        self.LoggerStart_button = wx.Button(apanel, -1, "   In Water  \nStart Logging\n(F1)")
+        self.LoggerStart_button = wx.Button(apanel, -1, "   In Water  \nStart Logging\n(F3)")
         self.LoggerStart_button.SetFont(buttonfont)
         self.LoggerStart_button.SetForegroundColour("FOREST GREEN")  # set text back color
         self.Bind(wx.EVT_BUTTON, self.on_LoggerStart_button, self.LoggerStart_button)
@@ -278,7 +278,7 @@ class GraphFrame(wx.Frame):
         self.LoggerEnd_button.SetForegroundColour("FOREST GREEN")  # set text back color
         self.Bind(wx.EVT_BUTTON, self.on_LoggerEnd_button, self.LoggerEnd_button)
 
-        self.BottomStart_button = wx.Button(apanel,-1, "On Bottom\nStart Fishing Tow\n(F3)")
+        self.BottomStart_button = wx.Button(apanel,-1, "On Bottom\nStart Fishing Tow\n(F4)")
         self.BottomStart_button.SetFont(buttonfont)
 #       self.monitor_button.SetBackgroundColour((255, 155, 0))  # set text back color
         self.BottomStart_button.SetForegroundColour("FOREST GREEN")  # set text back color
@@ -307,7 +307,7 @@ class GraphFrame(wx.Frame):
 
 
         warpfont = wx.Font(12, wx.DECORATIVE,wx.NORMAL, wx.BOLD)
-        self.Warp_button  = wx.Button(apanel, -1, "Enter WarpOut(m)\n(F4)  ")
+        self.Warp_button  = wx.Button(apanel, -1, "Enter WarpOut(m)\n(F8)  ")
         self.Warp_button.SetFont(warpfont)
         self.Warp_button.SetForegroundColour("FOREST GREEN")  # set text back color
         self.warpbox.Add(self.Warp_button, 1, wx.EXPAND | wx.ALIGN_LEFT | wx.ALL, 0)
@@ -344,24 +344,24 @@ class GraphFrame(wx.Frame):
         F4_id = wx.NewId()
         F5_id = wx.NewId()
         F6_id = wx.NewId()
+        F8_id = wx.NewId()
         F10_id = wx.NewId()
-        F12_id = wx.NewId()
+#        F12_id = wx.NewId()
 
-        self.Bind(wx.EVT_MENU, self.on_LoggerStart_button, id=F1_id)
-        self.Bind(wx.EVT_MENU, self.on_BottomStart_button, id=F3_id)
-        self.Bind(wx.EVT_MENU, self.on_Warp_button, id=F4_id)
+        self.Bind(wx.EVT_MENU, self.on_LoggerStart_button, id=F3_id)
+        self.Bind(wx.EVT_MENU, self.on_BottomStart_button, id=F4_id)
+        self.Bind(wx.EVT_MENU, self.on_Warp_button, id=F8_id)
         self.Bind(wx.EVT_MENU, self.on_BottomEnd_button, id=F5_id)
         self.Bind(wx.EVT_MENU, self.on_LoggerEnd_button, id=F6_id)
         self.Bind(wx.EVT_MENU, self.on_Abort_button, id=F10_id)
-        self.Bind(wx.EVT_MENU, self.on_Increment_tow_button, id=F12_id)
+#        self.Bind(wx.EVT_MENU, self.on_Increment_tow_button, id=F12_id)
 
-        self.accel_tbl = wx.AcceleratorTable(  [(wx.ACCEL_NORMAL, wx.WXK_F1, F1_id),
+        self.accel_tbl = wx.AcceleratorTable(  [(wx.ACCEL_NORMAL, wx.WXK_F1, F3_id),
                                                 (wx.ACCEL_NORMAL, wx.WXK_F3, F3_id),
-                                                (wx.ACCEL_NORMAL, wx.WXK_F4, F4_id),
+                                                (wx.ACCEL_NORMAL, wx.WXK_F4, F8_id),
                                                 (wx.ACCEL_NORMAL, wx.WXK_F5, F5_id),
                                                 (wx.ACCEL_NORMAL, wx.WXK_F6, F6_id),
-                                                (wx.ACCEL_NORMAL, wx.WXK_F10, F10_id),
-                                                (wx.ACCEL_NORMAL, wx.WXK_F12, F12_id)
+                                                (wx.ACCEL_NORMAL, wx.WXK_F10, F10_id)
                                                ]
                                             )
 
@@ -1207,10 +1207,12 @@ class GraphFrame(wx.Frame):
 
     def write_MissionLog(self, Event_String):
         if self.TripLog_fp == None:
-            self.TripLog_fp = open(self.MISIONFileName, "a",0)
-            msg = "PC CLOCK          ,  EVENT     , SHIPTRIPSET  ,     FEED ClOCK   , SNDER, NetSND,   LAT    ,    LONG,  WARP"
-
-            self.TripLog_fp.write(msg + '\n')
+            if os.path.isfile(self.MISIONFileName):
+                self.TripLog_fp = open(self.MISIONFileName, "w",0)
+            else:
+                msg = "PC CLOCK          ,  EVENT     , SHIPTRIPSET  ,     FEED ClOCK   , SNDER, NetSND,   LAT    ,    LONG,  WARP"
+                self.TripLog_fp = open(self.MISIONFileName, "a",0)
+                self.TripLog_fp.write(msg + '\n')
 
         self.TripLog_fp.write(str(Event_String) + '\n')
 

@@ -63,7 +63,7 @@ def main() :
 	datagen = DataGen2(FileName)
 	print "trying for serial port ",port
 	try: 
-		ser = serial.Serial(port, 9600)
+		ser = serial.Serial(port, 4800)
 	except serial.SerialException,e:
 		print "error opening serial port: "+port+" " + str(e)
 		return(False)
