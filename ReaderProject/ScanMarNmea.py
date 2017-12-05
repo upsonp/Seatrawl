@@ -208,6 +208,14 @@ class SCMWTD(SCM):
         ('Units', 'Tunits'),
     )
 
+# water temperature
+class SCMWST(SCM):
+    fields = (
+        ('Telegram', 'tel'),
+        ("Timestamp", "timestamp", pynmea2.timestamp),  # hhmmss.ss = UTC
+        ('Water Temperature', 'watertemp'),
+        ('Units', 'units'),
+    )
 ##############################
 # Data processing functions class
 ##############################
@@ -397,6 +405,11 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         Raw_String["WTS"] = x
         JDict["WTS"] = str(x.wiretension)
 
+
+    def process_wst(self, x, disp_text, Raw_String, JDict):
+#        disp_text["WST"].Data_text["TEMP"].SetValue(str(x.wiretension))
+        Raw_String["WST"] = x
+        JDict["WST"] = str(x.watertemp)
     #################################################################################
     # Dictionaries to allow translation of sensor into the correct procedure to call
     # GroupDict are the highest level ones that come from the pymea2 Sentence_type ;
@@ -416,6 +429,7 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         'WLS': process_wls,
         'WTP': process_wtp,
         'WTS': process_wtp,
+        'WST': process_wst
        }
 
     def dispatch_message(self,sentence_type, line_x ,disp_text,Raw_String,JDict):

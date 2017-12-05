@@ -128,7 +128,7 @@ class GraphFrame(wx.Frame):
         self.JDict['WLSO']= ""
         self.JDict['WTP']= ""
         self.JDict['WTS']= ""
-
+        self.JDict['WST']= ""
 
 
 
@@ -356,9 +356,9 @@ class GraphFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_Abort_button, id=F10_id)
 #        self.Bind(wx.EVT_MENU, self.on_Increment_tow_button, id=F12_id)
 
-        self.accel_tbl = wx.AcceleratorTable(  [(wx.ACCEL_NORMAL, wx.WXK_F1, F3_id),
-                                                (wx.ACCEL_NORMAL, wx.WXK_F3, F3_id),
-                                                (wx.ACCEL_NORMAL, wx.WXK_F4, F8_id),
+        self.accel_tbl = wx.AcceleratorTable(  [(wx.ACCEL_NORMAL, wx.WXK_F3, F3_id),
+                                                (wx.ACCEL_NORMAL, wx.WXK_F4, F4_id),
+                                                (wx.ACCEL_NORMAL, wx.WXK_F8, F8_id),
                                                 (wx.ACCEL_NORMAL, wx.WXK_F5, F5_id),
                                                 (wx.ACCEL_NORMAL, wx.WXK_F6, F6_id),
                                                 (wx.ACCEL_NORMAL, wx.WXK_F10, F10_id)
@@ -396,7 +396,7 @@ class GraphFrame(wx.Frame):
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.SUNKEN_BORDER | wx.VSCROLL
 
         self.label = wx.StaticText(self.panel,
-                label="   EVENT     STATION    DATE       TIME   BTM-D(m)  TRL_DEP(m)    LATITUDE     LONGITUDE")
+                label="   EVENT     STATION    DATE       TIME     BTM-D   TRL_D      LATITUDE   LONGITUDE   WARP")
         self.log1 = wx.TextCtrl(self.panel, wx.ID_ANY, size=(x, y), style=style)
 
         logfont = wx.Font(16, wx.MODERN, wx.NORMAL, wx.BOLD)
@@ -799,6 +799,7 @@ class GraphFrame(wx.Frame):
 
 
     def OnWarpTyped(self, event):
+
         self.WarpOut = event.GetString()
         self.Warp_text.Enable(False)
 #        self.Warp_button.Enable(False)
@@ -810,6 +811,9 @@ class GraphFrame(wx.Frame):
     # else do nothing; if user wants play back they can choose it from main menu
     def on_LoggerStart_button(self, event):
 
+        if not self.LoggerStart_button.IsEnabled():
+            return
+
         self.setup_new_tow()
 
         self.LoggerRun = True
@@ -820,6 +824,9 @@ class GraphFrame(wx.Frame):
 #        self.disp_BaseName.Data_text.SetForegroundColour("RED")
 
     def on_BottomStart_button(self, event):
+        if not self.BottomStart_button.IsEnabled():
+            return
+
         self.flash_status_message("BOTTOM TOW STARTED at",time.time())
         self.OnBottom = True
         self.StartTime = 0
@@ -830,6 +837,9 @@ class GraphFrame(wx.Frame):
         self.mark_event("ONBOTTOM")
 
     def on_Warp_button(self, event):
+        if not self.Warp_button.IsEnabled():
+            return
+
         self.Warp_text.Enable(True)
         self.Warp_text.SetFocus()
         self.warp_out = self.Warp_text.GetValue()
@@ -840,6 +850,10 @@ class GraphFrame(wx.Frame):
         return(self.Warp_text.GetValue())
 
     def on_BottomEnd_button(self, event):
+
+        if not self.BottomEnd_button.IsEnabled():
+            return
+
         self.OnBottom = False
         self.BottomEnd_button.Enable(False)
         self.LoggerEnd_button.Enable(True)
@@ -848,6 +862,11 @@ class GraphFrame(wx.Frame):
 
 
     def on_LoggerEnd_button(self, event):
+
+        if not self.LoggerEnd_button.IsEnabled():
+            return
+
+
         self.LoggerRun = False
         self.mark_event("OUTWATER")
         self.Warp_text.Enable(False)
@@ -858,6 +877,10 @@ class GraphFrame(wx.Frame):
         self.on_Increment_tow_button(-1)
 
     def on_Abort_button(self, event):
+
+            if not self.Abort_button.IsEnabled():
+                return
+
             if self.Confirm_abort_dialogue(event):
                 self.OnBottom = False
 #                self.LoggerRun = False
@@ -874,7 +897,7 @@ class GraphFrame(wx.Frame):
         new2a = new2 + 1
         new3 = str(new2a)
         new4 = new3.strip().zfill(3)
-        print "SET",self.ShipTripSet["SET"],"|new=",new,"|new2=",new2,"|NEW3=",new3,"|new4=",new4,"|"
+#        print "SET",self.ShipTripSet["SET"],"|new=",new,"|new2=",new2,"|NEW3=",new3,"|new4=",new4,"|"
 #        if self.Confirm_Increment_dialogue(event,new4):
         self.ShipTripSet["SET"]  = new4
         self.setup_new_tow()
@@ -1028,7 +1051,7 @@ class GraphFrame(wx.Frame):
 #            print "OUTPUT.."
 
             self.write_RawData(Raw_String)
-            self.write_Jdata(self.JDict)
+#            self.write_Jdata(self.JDict)
             self.write_CSVdata(self.JDict)
         # end of if LoggerRun
         # end of for sentence in block...
@@ -1101,8 +1124,14 @@ class GraphFrame(wx.Frame):
         dt = time.strftime('%Y-%m-%dT%H:%M:%S')
 
 #        if self.LoggerRun:
-        msg = "{:<10}".format(flag)+","+self.basename+","+ self.JDict["DATETIME"]+", "+self.JDict["DBS"]+" ,"+\
+        if self.JDict["DP_H"]!='':
+            msg = "{:<10}".format(flag)+","+self.basename+","+ self.JDict["DATETIME"]+", "+self.JDict["DBS"]+" ,"+\
               self.JDict["DP_H"]["measurement_val"]+",  "+ self.JDict["LAT"]+", "+self.JDict["LON"]
+        else:
+
+             msg = "{:<10}".format(flag) + "," + self.basename + "," + self.JDict["DATETIME"] + ", " + self.JDict["DBS"] + " ," + \
+                "NULL" + ",  " + self.JDict["LAT"] + ", " + self.JDict["LON"]
+
 
         if flag == "WARPENTER":
                 msg = msg + ','+ self.WarpOut
@@ -1208,10 +1237,10 @@ class GraphFrame(wx.Frame):
     def write_MissionLog(self, Event_String):
         if self.TripLog_fp == None:
             if os.path.isfile(self.MISIONFileName):
-                self.TripLog_fp = open(self.MISIONFileName, "w",0)
+                self.TripLog_fp = open(self.MISIONFileName, "a",0)
             else:
                 msg = "PC CLOCK          ,  EVENT     , SHIPTRIPSET  ,     FEED ClOCK   , SNDER, NetSND,   LAT    ,    LONG,  WARP"
-                self.TripLog_fp = open(self.MISIONFileName, "a",0)
+                self.TripLog_fp = open(self.MISIONFileName, "w",0)
                 self.TripLog_fp.write(msg + '\n')
 
         self.TripLog_fp.write(str(Event_String) + '\n')
