@@ -132,8 +132,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="316" />
-    <option name="y" value="12" />
+    <option name="x" value="361" />
+    <option name="y" value="146" />
     <option name="width" value="1263" />
     <option name="height" value="998" />
   </component>
@@ -163,6 +163,11 @@
               <item name="Seatrawl" type="b2602c69:ProjectViewProjectNode" />
               <item name="Seatrawl" type="462c0819:PsiDirectoryNode" />
               <item name="ReaderProject" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Seatrawl" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Seatrawl" type="462c0819:PsiDirectoryNode" />
+              <item name="test_data" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="Seatrawl" type="b2602c69:ProjectViewProjectNode" />
@@ -305,14 +310,20 @@
       <option name="project" value="LOCAL" />
       <updated>1512670098441</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="locked out F keys when button not enabled, disab;ed jdict file fixed other things like lables etc">
+      <created>1512670112871</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1512670112871</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="316" y="12" width="1263" height="998" extended-state="0" />
-    <editor active="true" />
+    <frame x="361" y="146" width="1263" height="998" extended-state="0" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17161188" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17161188" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
