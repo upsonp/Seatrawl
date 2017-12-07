@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8747f7ad-bd61-476e-81e3-d1d4b16f2676" name="Default" comment="locked out F keys when button not enabled, disab;ed jdict file fixed other things like lables etc">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReaderProject/Quick_guide.docx" afterPath="$PROJECT_DIR$/ReaderProject/Quick_guide.docx" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Seatrawl.iml" afterPath="$PROJECT_DIR$/.idea/Seatrawl.iml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+    <list default="true" id="8747f7ad-bd61-476e-81e3-d1d4b16f2676" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReaderProject/ScanMar.CFG" afterPath="$PROJECT_DIR$/ReaderProject/ScanMar.CFG" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReaderProject/ScanMarNmea.py" afterPath="$PROJECT_DIR$/ReaderProject/ScanMarNmea.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ReaderProject/ScanMar_logger.py" afterPath="$PROJECT_DIR$/ReaderProject/ScanMar_logger.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -304,7 +298,14 @@
       <option name="project" value="LOCAL" />
       <updated>1512515467635</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="locked out F keys when button not enabled, disab;ed jdict file fixed other things like lables etc">
+      <created>1512670098441</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1512670098441</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="ToolWindowManager">
