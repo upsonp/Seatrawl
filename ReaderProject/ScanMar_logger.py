@@ -435,10 +435,10 @@ class GraphFrame(wx.Frame):
                                         wx.BLUE,wx.VERTICAL,afontsize)
 
         self.disp_text=OrderedDict([("DVTLAM_P",''),("DVTLAM_R",''),("DVTLAS_P",''),("DVTLAS_R",''),
-                                        ("CVTLAM_S",'')])
+                                        ("DVTLAM_S",''),("CVTLAM_S",'')])
         xx =OrderedDict([("0",'0'), ("1", '0'),( "2", '0'),( "3", '0'),("4", '0')])
         x2 = OrderedDict([("DVTLAM_P", 'Port-Pitch'), ("DVTLAM_R", 'Port-Roll'), ("DVTLAS_P",'Stbd-Pitch'),
-                                        ("DVTLAS_R",'Stbd-Roll'),("CVTLAM_S", 'Wing-Spread')])
+                                        ("DVTLAS_R",'Stbd-Roll'),("DVTLAM_S", 'Door-Spread'),("CVTLAM_S", 'Wing-Spread')])
 
 
 # build the data boxes,,  access as disp_text["DVTLAM"].Data_text["R"].SetValue(xxxx)

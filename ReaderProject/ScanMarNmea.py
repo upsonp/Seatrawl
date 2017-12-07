@@ -289,6 +289,7 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         'DVTLAM_R': "",
         'DVTLAS_P': "",
         'DVTLAS_R': "",
+		'DVTLAM_S': "",
         'CVTLAM_S': "",
         'TSP_X': "",
         'TSP_Y': "",
@@ -301,7 +302,7 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         'DP_H': "",
     }
     def process_sm2(self,y,disp_text,Raw_String,JDict):
-        if y.sensor == 'CVTLAM' and y.measurement_id == '':  # issue with CVTLAM having no id value in test data
+        if (y.sensor == 'DVTLAM' or y.sensor == 'CVTLAM') and y.measurement_id == '':  # issue with CVTLAM having no id value in test data
             y.measurement_id = 'S'
         elif  y.sensor == "DP" :  # DP does not have an id field so provide a dummy
             y.measurement_id = "H"
