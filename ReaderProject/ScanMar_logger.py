@@ -20,6 +20,7 @@ import time
 import serial
 from  datetime import datetime, timedelta
 import json
+from math import radians, cos, sin, asin, sqrt
 
 
 from Serial_Tools import *
@@ -236,7 +237,7 @@ class GraphFrame(wx.Frame):
         self.menubar.Append(menu_file, "&File")
         self.menubar.Append(menu_realtime, "RealTime")
         self.menubar.Append(menu_archived, "Archived")
-        self.menubar.Append(menu_option, "Trip Optioms")
+        self.menubar.Append(menu_option, "Trip Options")
         self.menubar.Append(menu_help, "Help")
         self.SetMenuBar(self.menubar)
 
@@ -422,6 +423,7 @@ class GraphFrame(wx.Frame):
 
 
         afontsize = 10
+        afontmiddle = 18
         afontbigger = 26
         self.hbox1 = wx.BoxSizer(wx.HORIZONTAL)
 
@@ -507,19 +509,34 @@ class GraphFrame(wx.Frame):
 
 
         self.hbox5 = wx.BoxSizer(wx.HORIZONTAL)
-        self.disp_text5 = OrderedDict([ ("ET", '')])
-        xxw = OrderedDict([("ET", '00:00:00')])
-        self.disp_text5["ET"] = RollingDialBox_multi(self.panel, -1, "ET Bottom (H:M:S)",xxw, '0',160,
-                                                     wx.RED,wx.VERTICAL,afontbigger)
-        self.hbox5.Add(self.disp_text5["ET"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
-        self.disp_text6 = OrderedDict([ ("CLOCK", '')])
-        xxw = OrderedDict([("CLOCK", '12:12:12')])
-        dt =  time.strftime('%Y-%m-%d\n%H:%M:%S')
         zone = time.tzname[time.daylight]
-        self.disp_text6["CLOCK"] = RollingDialBox_2d(self.panel, -1, "PC Clock", dt ,80,
-                                                        wx.BLACK,wx.VERTICAL,afontsize)
-        self.hbox5.Add(self.disp_text6["CLOCK"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+
+        self.hbox6a = wx.BoxSizer(wx.HORIZONTAL)
+        self.disp_text6a = OrderedDict([("TIMEDATE", '')])
+        xxw = OrderedDict([("DATE", '00-00-00'), ("TIME", '00:00:00')])
+
+        self.disp_text6a["TIMEDATE"] = RollingDialBox_multi(self.panel, -1, "PC TIME", xxw, '0', 126,
+                                                            wx.BLACK, wx.VERTICAL, afontmiddle-2)
+        self.hbox5.Add(self.disp_text6a["TIMEDATE"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+
+        self.disp_text5 = OrderedDict([ ("ET-DIST", '')])
+        xxw = OrderedDict([("ET", '00:00:00'),("DIST","00.000")])
+        self.disp_text5["ET-DIST"] = RollingDialBox_multi(self.panel, -1, "ET-DIST (Nm)",xxw, '0',160,
+                                                     wx.RED,wx.VERTICAL,afontbigger)
+
+        self.hbox5.Add(self.disp_text5["ET-DIST"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+
+
+#        self.disp_text6 = OrderedDict([ ("CLOCK", '')])
+#        xxw = OrderedDict([("CLOCK", '12:12:12')])
+#        dt =  time.strftime('%Y-%m-%d\n%H:%M:%S')
+
+
+
+#       self.disp_text6["CLOCK"] = RollingDialBox_2d(self.panel, -1, "PC Clock", dt ,140,
+#                                                        wx.BLACK,wx.VERTICAL,afontmiddle)
+#        self.hbox5.Add(self.disp_text6["CLOCK"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
 # ##########################
 
@@ -555,9 +572,6 @@ class GraphFrame(wx.Frame):
 #        self.hbox8.Add(self.disp_label8, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 #        self.hbox8.Add(self.disp_text8["GPS"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
-
-
-
 #        gps2=OrderedDict([("DT","DATE"),("TM","TIME")])
 #        self.disp_label10= RollingDialBox_multi_static(self.panel, -1,"----  Channel  ----", gps2, '0',50,wx.RED,wx.VERTICAL)
 #        self.disp_text10 = OrderedDict([ ("GPSZDA", '')])
@@ -576,17 +590,10 @@ class GraphFrame(wx.Frame):
         self.hbox11 = wx.BoxSizer(wx.HORIZONTAL)
         self.disp_text11 = OrderedDict([("DBS", '')])
 
-        x2 = OrderedDict([("DBS", '(DBS) Depth (m)')])
+        x2 = OrderedDict([("DBS", 'Depth (m)')])
         self.disp_text11["DBS"] = RollingDialBox_multi(self.panel, -1, x2["DBS"], xx, '0', 80, wx.BLACK, wx.VERTICAL,
                                                       afontsize)
         self.hbox11.Add(self.disp_text11["DBS"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
-
-
-
-
-
-
-
 
         #        xxz = OrderedDict([("-", "Depth (m)"),])
 #        self.disp_label12 = RollingDialBox_multi_static(self.panel, -1, "----  Channel  ----", xxz, '0', 90, wx.RED,
@@ -648,15 +655,10 @@ class GraphFrame(wx.Frame):
         self.disp_text.update(self.disp_text3)
         self.disp_text.update(self.disp_text4)
         self.disp_text.update(self.disp_text5)
-
         self.disp_text.update(self.disp_text8)
-#        self.disp_text.update(self.disp_text10)
-        self.disp_text.update(self.disp_text6)
+        self.disp_text.update(self.disp_text6a)
         self.disp_text.update(self.disp_text11)
-#        self.disp_text.update(self.disp_text12)
-#        self.disp_text.update(self.disp_text13)
-#        self.disp_text.update(self.disp_text14)
-#        self.disp_text.update(self.disp_text15)
+
 # Row 3   - buttoms and rate
 
 
@@ -748,7 +750,7 @@ class GraphFrame(wx.Frame):
         self.LRbox2.Add(self.TSPbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
         self.LRbox2.AddSpacer(4)
         self.LRbox2.Add(self.DBSbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
-        self.LRbox2.AddSpacer(10)
+        self.LRbox2.AddSpacer(4)
         self.LRbox2.Add(self.Infobox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
 
@@ -989,14 +991,14 @@ class GraphFrame(wx.Frame):
         self.Tstr = '0'
         ETstr ='0'
 
-
         # working variables with no persistence outside this routine or across calls to it
 
         Raw_String = OrderedDict()
-        dttm = str(datetime.now())
-        dt =  time.strftime('%Y-%m-%d\n%H:%M:%S')
-        self.disp_text["CLOCK"].Data_text.SetValue(str(dt))
-
+#        dttm = str(datetime.now())
+        dty =  time.strftime('%Y-%m-%d')
+        dtt= time.strftime('%H:%M:%S')
+        self.disp_text["TIMEDATE"].Data_text["DATE"].SetValue(str(dty))
+        self.disp_text["TIMEDATE"].Data_text["TIME"].SetValue(str(dtt))
 
         # If a data source has not been defined do nothing on this pass
         if self.DataSource == None :
@@ -1024,11 +1026,21 @@ class GraphFrame(wx.Frame):
         if self.OnBottom:
             if self.StartTime == 0:
                 self.StartTime = datetime.now()
+                self.slat = float(self.JDict["Lat"])
+                self.slon = float(self.JDict["Long"])
+#                print self.slon, self.slat
                 ET = 0
+                self.dist  = 0.0
+                self.elapsed = ""
             else:
                 Et = datetime.now() - self.StartTime
-                self.disp_text["ET"].Data_text["ET"].SetValue(str(timedelta(seconds=Et.seconds)))
+                self.elapsed = str(timedelta(seconds=Et.seconds))
 
+                self.disp_text["ET-DIST"].Data_text["ET"].SetValue(str(timedelta(seconds=Et.seconds)))
+
+                self.dist  = self.haversine (self.slon, self.slat, float(self.JDict["Long"]), float(self.JDict["Lat"]) )
+#                print  self.slon,self.slat,float(self.JDict["Long"]), float(self.JDict["Lat"]),self.dist
+                self.disp_text["ET-DIST"].Data_text["DIST"].SetValue('{:>7.3}'.format(self.dist))
 
 # process the block of data
         if block["OK"]:
@@ -1066,6 +1078,26 @@ class GraphFrame(wx.Frame):
 #    D_Lib: debug    printing    for files[. *] and level[200] is turned on
 #    D_Lib: debug    printing    for files[. *] and level[300] is turned on
 # ########################################################################
+
+
+    def haversine(self,lon1, lat1, lon2, lat2):
+        """
+        Calculate the great circle distance between two points
+        on the earth (specified in decimal degrees)
+        """
+
+        # convert decimal degrees to radians
+        lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
+
+        # haversine formula
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
+        a = sin(dlat / 2.) ** 2. + cos(lat1) * cos(lat2) * sin(dlon / 2.) ** 2.
+        c = 2. * asin(sqrt(a))
+        r = 6371.8  # Radius of earth in kilometers. Use 3959.87433 for miles
+        km =  c * r
+        nm= km/1.853
+        return nm
 
     def save_file_dialog(self):
         """Save contents of output window."""
@@ -1134,14 +1166,25 @@ class GraphFrame(wx.Frame):
 
 
         if flag == "WARPENTER":
-                msg = msg + ','+ self.WarpOut
+            msg = msg + ','+ self.WarpOut
+
+        self.log1.AppendText('\n'+msg )
 #        else:
 #            msg ="  "+"{:<10}".format(flag)+", "+self.basename
 
-        self.log1.AppendText(msg+'\n')
+        log_msg = dt + ", " + msg
+        self.write_MissionLog(log_msg)
 
-        log_msg  = dt+", "+msg
-        self.write_MissionLog (log_msg)
+        if flag == "OUTWATER":
+            msg = msg + ',' + self.elapsed + ',' + '{:>7.3}'.format(self.dist)
+
+            msg = "{:<10}".format("TOWINFO") + "," + self.basename + ", DURATION= " + self.elapsed + ', DISTANCE= ' + '{:>7.3}'.format(
+            self.dist)+' Nm, WARP= '+ self.WarpOut+' m'
+            self.log1.AppendText('\n'+msg)
+            log_msg = dt + ", " + msg
+            self.write_MissionLog(log_msg)
+
+
 
     def abort_logging_file(self):
         pass
@@ -1155,6 +1198,8 @@ class GraphFrame(wx.Frame):
         self.BottomEnd_button.Enable(False)
         self.LoggerEnd_button.Enable(False)
         self.Abort_button.Enable(False)
+        self.disp_text["ET-DIST"].Data_text["ET"].SetValue('00:00:00')
+        self.disp_text["ET-DIST"].Data_text["DIST"].SetValue('0000.0')
         pass
 
     def setup_new_tow(self):
@@ -1163,6 +1208,8 @@ class GraphFrame(wx.Frame):
         self.set_FileNames()
         self.basename = self.make_base_name()
         self.disp_BaseName.Data_text.SetValue(self.basename)
+        self.disp_text["ET-DIST"].Data_text["ET"].SetValue('00:00:00')
+        self.disp_text["ET-DIST"].Data_text["DIST"].SetValue('0000.0')
 #        self.disp_BaseName.Data_text.SetForegroundColour()
 
     def set_FileNames(self):
@@ -1239,7 +1286,7 @@ class GraphFrame(wx.Frame):
             if os.path.isfile(self.MISIONFileName):
                 self.TripLog_fp = open(self.MISIONFileName, "a",0)
             else:
-                msg = "PC CLOCK          ,  EVENT     , SHIPTRIPSET  ,     FEED ClOCK   , SNDER, NetSND,   LAT    ,    LONG,  WARP"
+                msg = "PC CLOCK          ,  EVENT     , SHIPTRIPSET  ,  FEED ClOCK   , ShipSND, NetSND,   LAT    ,    LONG,     INFO"
                 self.TripLog_fp = open(self.MISIONFileName, "w",0)
                 self.TripLog_fp.write(msg + '\n')
 
@@ -1298,6 +1345,7 @@ class GraphFrame(wx.Frame):
         self.DataSource.start()
         self.DataSource.start_data_feed()
 
+        self.log1.AppendText('Opening Data Port...' )
         self.ShowMessage ("Opening Data port\nPlease Wait for data to display\nbefore Starting Logging ", "PLease wait..",-1)
 
 
