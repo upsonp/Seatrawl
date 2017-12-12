@@ -516,8 +516,8 @@ class GraphFrame(wx.Frame):
         self.disp_text6a = OrderedDict([("TIMEDATE", '')])
         xxw = OrderedDict([("DATE", '00-00-00'), ("TIME", '00:00:00')])
 
-        self.disp_text6a["TIMEDATE"] = RollingDialBox_multi(self.panel, -1, "PC TIME", xxw, '0', 126,
-                                                            wx.BLACK, wx.VERTICAL, afontmiddle-2)
+        self.disp_text6a["TIMEDATE"] = RollingDialBox_multi(self.panel, -1, "PC TIME", xxw, '0', 155,
+                                                            wx.BLACK, wx.VERTICAL, afontmiddle +2)
         self.hbox5.Add(self.disp_text6a["TIMEDATE"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
         self.disp_text5 = OrderedDict([ ("ET-DIST", '')])
