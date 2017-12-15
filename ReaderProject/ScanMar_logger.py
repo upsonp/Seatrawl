@@ -1438,7 +1438,7 @@ class GraphFrame(wx.Frame):
                 self.ser.apply_settings(commsettings)
             except:
                 self.ser.applySettingsDict(commsettings)    # pyserial pre v 3.0
-                
+
             fp.close()
         except:
 #            self.set_default_com_cfg()
