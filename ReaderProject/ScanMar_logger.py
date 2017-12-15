@@ -1434,7 +1434,11 @@ class GraphFrame(wx.Frame):
                 self.comPort = fp.readline().rstrip()
                 self.ser.port = self.comPort
                 commsettings = json.load(fp)
+            try:
                 self.ser.apply_settings(commsettings)
+            except:
+                self.ser.applySettingsDict(commsettings)    # pyserial pre v 3.0
+                
             fp.close()
         except:
 #            self.set_default_com_cfg()
@@ -1442,7 +1446,11 @@ class GraphFrame(wx.Frame):
             self.on_ser_config(-1)
 
     def save_cfg(self):
-        comsettings = self.ser.get_settings()
+        try:
+            comsettings = self.ser.get_settings()
+        except:
+            comsettings = self.ser.getSettingsDict()   # pyserial pre v 30.0
+
         with open('ScanMar.CFG', 'w') as fp:
             fp.write(self.basename)
             fp.write('\n')
