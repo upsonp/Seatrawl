@@ -35,7 +35,7 @@ ID_START_ARC = wx.NewId()
 ID_STOP_ARC = wx.NewId()
 ID_SER_CONF = wx.NewId()
 
-VERSION = "V1.02 Nov 2017"
+VERSION = "V1.05 Dec 2017"
 TITLE = "ScanMar_Logger"
 
 
@@ -58,7 +58,7 @@ class GraphFrame(wx.Frame):
         if not os.path.exists(self.dataDir):
             os.makedirs(self.dataDir)
 
-        self.ShipTripSet = {"SHIP": "00", "TRIP": "000", "SET": "000"}
+        self.ShipTripSet = {"YEAR":'1900',"SHIP": "TEL", "TRIP": "000", "SET": "000"}
         self.basename = self.make_base_name()
 
 # we need a serial instance to allow the  serial config dialogue to function
@@ -80,7 +80,7 @@ class GraphFrame(wx.Frame):
         self.ARC_source = False
         self.running_a_logfile = False
         self.HAVE_DATA = False
-
+        self.WarpOut = '0'
 # sued for elapsed time
         self.StartTime = -1
 
@@ -140,7 +140,7 @@ class GraphFrame(wx.Frame):
 
         self.BQueue = Queue.Queue()
 
-#        self.flash_status_message("OPENING FILE FOR OUTPUT " + self.LogFileName)
+#        self.flash_status_message("Setting UP")
 
         # Build the display
         self.menubar = wx.MenuBar()
@@ -216,8 +216,13 @@ class GraphFrame(wx.Frame):
         self.Bind(wx.EVT_MENU, self.on_stop_arc, m_arcstop)
 
         menu_option = wx.Menu()
-        m_basehead = menu_option.Append(-1, "Set ship trip stn", "shiptripstn")
+        m_basehead = menu_option.Append(-1, "Set ship year trip stn", "shipyeartripstn")
         self.Bind(wx.EVT_MENU, self.on_set_base_header, m_basehead)
+
+
+
+
+
 #        menu_option.AppendSeparator()
 #        m_edithead = menu_option.Append(-1, "Edit File Header", "Edit File Header")
 #        self.Bind(wx.EVT_MENU, self.on_edit_head, m_edithead)
@@ -397,10 +402,10 @@ class GraphFrame(wx.Frame):
         style = wx.TE_MULTILINE | wx.TE_READONLY | wx.SUNKEN_BORDER | wx.VSCROLL
 
         self.label = wx.StaticText(self.panel,
-                label="   EVENT     STATION    DATE       TIME     BTM-D   TRL_D      LATITUDE   LONGITUDE   WARP")
+                label="STATION            DATE      TIME     | EVENT       BTM-D   TRL_D    LATITUDE    LONGITUDE INFO")
         self.log1 = wx.TextCtrl(self.panel, wx.ID_ANY, size=(x, y), style=style)
 
-        logfont = wx.Font(16, wx.MODERN, wx.NORMAL, wx.BOLD)
+        logfont = wx.Font(14, wx.MODERN, wx.NORMAL, wx.BOLD)
         self.log1.SetFont(logfont)
         self.label.SetFont(logfont)
 
@@ -645,8 +650,8 @@ class GraphFrame(wx.Frame):
 
 
 
-        self.disp_BaseName = RollingDialBox(self.panel, -1, "Ship - Trip - Set",
-                                            self.basename, 200,"FOREST GREEN",wx.HORIZONTAL,afontbigger)
+        self.disp_BaseName = RollingDialBox(self.panel, -1, "-- Ship ----- Year ------ Trip ---- Set -- ",
+                                            self.basename, 220,"FOREST GREEN",wx.HORIZONTAL,afontmiddle)
 
 #        print self.BaseName
 
@@ -793,7 +798,7 @@ class GraphFrame(wx.Frame):
 # ***********************************************************
     def create_status_bar(self):
         self.statusbar = self.CreateStatusBar()
-        self.statusbar.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
+#        self.statusbar.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWTEXT))
 
 # ############################################
 
@@ -818,18 +823,20 @@ class GraphFrame(wx.Frame):
 
         self.setup_new_tow()
 
+
         self.LoggerRun = True
         self.LoggerStart_button.Enable(False)
         self.BottomStart_button.Enable(True)
         self.Abort_button.Enable(True)
         self.mark_event("INWATER")
+        self.flash_status_message("LOGGER STARTED")
 #        self.disp_BaseName.Data_text.SetForegroundColour("RED")
 
     def on_BottomStart_button(self, event):
         if not self.BottomStart_button.IsEnabled():
             return
 
-        self.flash_status_message("BOTTOM TOW STARTED at",time.time())
+        self.flash_status_message("BOTTOM TOW STARTED")
         self.OnBottom = True
         self.StartTime = 0
         self.BottomStart_button.Enable(False)
@@ -846,6 +853,7 @@ class GraphFrame(wx.Frame):
         self.Warp_text.SetFocus()
         self.warp_out = self.Warp_text.GetValue()
         self.warp_out = self.get_warp()
+        self.flash_status_message("WARP ENTERED")
 
 
     def get_warp(self):
@@ -861,6 +869,7 @@ class GraphFrame(wx.Frame):
         self.LoggerEnd_button.Enable(True)
 
         self.mark_event("OFFBOTTOM")
+        self.flash_status_message("BOTTOM TOW ENDED")
 
 
     def on_LoggerEnd_button(self, event):
@@ -877,13 +886,16 @@ class GraphFrame(wx.Frame):
 #        self.close_files("SET")
         self.clear_all_buttons()
         self.on_Increment_tow_button(-1)
+        self.flash_status_message("TOW ENDED")
 
     def on_Abort_button(self, event):
 
             if not self.Abort_button.IsEnabled():
+                self.flash_status_message("ABORT CANCELLED")
                 return
 
             if self.Confirm_abort_dialogue(event):
+                self.flash_status_message("ABORTTING....")
                 self.OnBottom = False
 #                self.LoggerRun = False
                 self.mark_event("ABORT")
@@ -1062,9 +1074,10 @@ class GraphFrame(wx.Frame):
         if self.LoggerRun:
 #            print "OUTPUT.."
 
-            self.write_RawData(Raw_String)
-#            self.write_Jdata(self.JDict)
-            self.write_CSVdata(self.JDict)
+                if self.RT_source:  # only write files not in archive playback mode
+                    self.write_RawData(Raw_String)
+#                   self.write_Jdata(self.JDict)
+                    self.write_CSVdata(self.JDict)
         # end of if LoggerRun
         # end of for sentence in block...
 
@@ -1101,7 +1114,8 @@ class GraphFrame(wx.Frame):
 
     def save_file_dialog(self):
         """Save contents of output window."""
-        CSV_outfilename = self.ShipTripSet["SHIP"]+self.ShipTripSet["TRIP"]+self.ShipTripSet["SET"]
+#        CSV_outfilename = self.ShipTripSet["SHIP"]+self.ShipTripSet["YEAR"]+self.ShipTripSet["TRIP"]+'-'+self.ShipTripSet["SET"]
+        CSV_outfilename  = self.basename
         dlg = wx.FileDialog(None, "Save File As...", "", "", "ScanMar Proc log|*.csv|All Files|*",  wx.FD_SAVE|wx.FD_OVERWRITE_PROMPT)
         if dlg.ShowModal() ==  wx.ID_OK:
             CSV_outfilename = dlg.GetPath()
@@ -1110,19 +1124,21 @@ class GraphFrame(wx.Frame):
     
     def get_file_dialog(self):
         filename = None
-        dialog = wx.FileDialog(None, "Choose File.",os.getcwd(), "", "ScanMar Raw Log|*.log|All Files|*",wx.FD_OPEN|wx.FD_FILE_MUST_EXIST)
+        dialog = wx.FileDialog(None, "Choose File.",os.getcwd(), "", "ScanMar Raw Log|*.pnmea|All Files|*",wx.FD_OPEN|wx.FD_FILE_MUST_EXIST)
         if dialog.ShowModal() == wx.ID_OK:
             filename =  dialog.GetPath()  
         dialog.Destroy()
         return(filename)
 
     def make_base_name(self):
-         return(self.ShipTripSet["SHIP"]+'-'+self.ShipTripSet["TRIP"]+'-'+self.ShipTripSet["SET"])
+         return(self.ShipTripSet["SHIP"]+'-'+self.ShipTripSet["YEAR"]+'-'+self.ShipTripSet["TRIP"]+'-'+self.ShipTripSet["SET"])
 
-    def make_STS(self):
-        self.ShipTripSet["SHIP"] = self.basename[0:2]
-        self.ShipTripSet["TRIP"]= self.basename[3:6]
-        self.ShipTripSet["SET"]= self.basename[7:10]
+    def make_SYTS(self,abasename):
+        self.ShipTripSet["SHIP"],self.ShipTripSet["YEAR"],self.ShipTripSet["TRIP"],self.ShipTripSet["SET"] = abasename.split('-')
+
+#        self.ShipTripSet["SHIP"] = self.basename[0:2]
+#        self.ShipTripSet["TRIP"]= self.basename[3:6]
+#        self.ShipTripSet["SET"]= self.basename[7:10]
 
          ########################################################
          # dialog to verify abort
@@ -1157,16 +1173,16 @@ class GraphFrame(wx.Frame):
 
 #        if self.LoggerRun:
         if self.JDict["DP_H"]!='':
-            msg = "{:<10}".format(flag)+","+self.basename+","+ self.JDict["DATETIME"]+", "+self.JDict["DBS"]+" ,"+\
+            msg = self.basename+", "+ self.JDict["DATETIME"]+ ", " + "{:<10}".format(flag)+", " + self.JDict["DBS"]+", "+\
               self.JDict["DP_H"]["measurement_val"]+",  "+ self.JDict["LAT"]+", "+self.JDict["LON"]
         else:
 
-             msg = "{:<10}".format(flag) + "," + self.basename + "," + self.JDict["DATETIME"] + ", " + self.JDict["DBS"] + " ," + \
+             msg =  self.basename + ", " + self.JDict["DATETIME"] + ", "+"{:<10}".format(flag) + ", "  + self.JDict["DBS"] + ", " + \
                 "NULL" + ",  " + self.JDict["LAT"] + ", " + self.JDict["LON"]
 
 
         if flag == "WARPENTER":
-            msg = msg + ','+ self.WarpOut
+            msg = msg + ', WARP= '+ self.WarpOut+' m'
 
         self.log1.AppendText('\n'+msg )
 #        else:
@@ -1178,11 +1194,12 @@ class GraphFrame(wx.Frame):
         if flag == "OUTWATER":
             msg = msg + ',' + self.elapsed + ',' + '{:>7.3}'.format(self.dist)
 
-            msg = "{:<10}".format("TOWINFO") + "," + self.basename + ", DURATION= " + self.elapsed + ', DISTANCE= ' + '{:>7.3}'.format(
-            self.dist)+' Nm, WARP= '+ self.WarpOut+' m'
+            msg =  self.basename +", "+ self.JDict["DATETIME"] + ", "+ "{:<10}".format("TOWINFO") + ", DURATION= " +\
+                   self.elapsed + ', DISTANCE= ' + '{:>7.3}'.format(self.dist)+' Nm, WARP= '+ self.WarpOut+' m'
             self.log1.AppendText('\n'+msg)
             log_msg = dt + ", " + msg
-            self.write_MissionLog(log_msg)
+            if self.RT_source:   # dont write to fiels if in archive playback mode
+                self.write_MissionLog(log_msg)
 
 
 
@@ -1203,9 +1220,11 @@ class GraphFrame(wx.Frame):
         pass
 
     def setup_new_tow(self):
-        self.save_cfg()
-        self.close_files("ALL")
-        self.set_FileNames()
+        if self.RT_source:
+            self.save_cfg()
+            self.close_files("ALL")
+            self.set_FileNames()
+
         self.basename = self.make_base_name()
         self.disp_BaseName.Data_text.SetValue(self.basename)
         self.disp_text["ET-DIST"].Data_text["ET"].SetValue('00:00:00')
@@ -1218,9 +1237,9 @@ class GraphFrame(wx.Frame):
 
         self.disp_BaseName.Data_text.SetValue(str(self.basename))
         self.CSVFileName = self.dataDir+"\\"+self.basename +".csv"
-        self.RAWFileName = self.dataDir+"\\"+self.basename +".raw"
+        self.RAWFileName = self.dataDir+"\\"+self.basename +".pnmea"
         self.JSONFileName = self.dataDir+"\\"+self.basename +".json"
-        self.MISIONFileName = self.dataDir+"\\"+self.basename[0:6] +".log"
+        self.MISIONFileName = self.dataDir+"\\"+self.basename[0:12] +".log"
 
 #   ########  the various log files for data and events #################
     # I'm opening for append and unbuffered,, the append is to get around a repeat of a set#
@@ -1286,7 +1305,8 @@ class GraphFrame(wx.Frame):
             if os.path.isfile(self.MISIONFileName):
                 self.TripLog_fp = open(self.MISIONFileName, "a",0)
             else:
-                msg = "PC CLOCK          ,  EVENT     , SHIPTRIPSET  ,  FEED ClOCK   , ShipSND, NetSND,   LAT    ,    LONG,     INFO"
+                msg = "PC CLOCK           , SHIPTRIPSET    ,   FEED ClOCK,       EVENT     , ShipSND, NetSND,   LAT    ,    LONG,     INFO"
+
                 self.TripLog_fp = open(self.MISIONFileName, "w",0)
                 self.TripLog_fp.write(msg + '\n')
 
@@ -1321,6 +1341,11 @@ class GraphFrame(wx.Frame):
             if FileName != None:
 
                 Source = "ARCHIVE"
+                self.basename = os.path.splitext(os.path.basename(FileName))[0]
+
+                self.make_SYTS(self.basename)
+                self.setup_new_tow()
+
                 self.DataSource = DataGen_que(self, "ARCHIVE", FileName, self.BQueue)
 #                self.DataSource = DataGen_que(self,"ARCHIVE", FileName)  # Create a data source instance
                 menubar.EnableTop(1, False)  # lock out RT playback while Archived running
@@ -1398,12 +1423,12 @@ class GraphFrame(wx.Frame):
     def on_set_base_header(self,event):
         xx = ShipTrip_Dialog(self)
 
-
-        xx.SetBase(self.ShipTripSet["SHIP"],self.ShipTripSet["TRIP"],self.ShipTripSet["SET"])
+        xx.SetBase(self.ShipTripSet["SHIP"],self.ShipTripSet["YEAR"],self.ShipTripSet["TRIP"],self.ShipTripSet["SET"])
         res=xx.ShowModal()
+
         if res == wx.ID_OK:
             self.ShipTripSet["SHIP"] = xx.GetShip()
-#            self.hship = xx.GetShip()
+            self.ShipTripSet["YEAR"] = xx.GetYear()
             self.ShipTripSet["TRIP"] = xx.GetTrip()
             self.ShipTripSet["SET"] = xx.GetStn()
             self.basename = self.make_base_name()
@@ -1412,8 +1437,8 @@ class GraphFrame(wx.Frame):
             xx.Destroy()
 
     def set_default_com_cfg(self):  # Defaults as specified
-        DEFAULT_COM = "COM9"
-        DEFAULT_BAUD = 1200
+        DEFAULT_COM = "COM3"
+        DEFAULT_BAUD = 4800
 
         self.ser.port = DEFAULT_COM
         self.ser.baudrate = DEFAULT_BAUD
@@ -1430,7 +1455,7 @@ class GraphFrame(wx.Frame):
         try:
             with open('ScanMar.CFG', 'r') as fp:
                 self.basename = fp.readline().rstrip()
-                self.make_STS()
+                self.make_SYTS(self.basename)
                 self.comPort = fp.readline().rstrip()
                 self.ser.port = self.comPort
                 commsettings = json.load(fp)
@@ -1549,7 +1574,7 @@ class GraphFrame(wx.Frame):
 
         info.SetName(TITLE)
         info.SetVersion(VERSION)
-        info.SetDevelopers (["D. Senciall ,  Nov 17 2017",
+        info.SetDevelopers (["D. Senciall ,  Dec 20 2017",
                              "\nScience Branch",
                              "\n NWAFC, NL region-DFO, Gov. of Canada"])
         info.SetCopyright ("Note: See Source for any 3rd party credits")

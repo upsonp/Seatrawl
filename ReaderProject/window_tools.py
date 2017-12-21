@@ -267,7 +267,7 @@ class BoundControlBox(wx.Panel):
 # *** End of BOUND CONTROL BOX Class *************************************
 class ShipTrip_Dialog(wx.Dialog):
     def __init__(self, parent):
-        wx.Dialog.__init__(self, parent, title=u"ShipTrpStn")
+        wx.Dialog.__init__(self, parent, title=u"ShipYearTrpStn")
         #        super(ShipTrip_Dialog,self).__init__(parent)
 
         self.panel = EntryPanel(self)
@@ -277,11 +277,14 @@ class ShipTrip_Dialog(wx.Dialog):
         self.SetSizer(sizer)
         self.SetInitialSize()
 
-    def SetBase(self, ship, trip, stn):
-        self.panel.SetBase(ship, trip, stn)
+    def SetBase(self, ship, year, trip, stn):
+        self.panel.SetBase(ship, year, trip, stn)
 
     def GetShip(self):
         return (self.panel.GetShip())
+
+    def GetYear(self):
+        return (self.panel.GetYear())
 
     def GetTrip(self):
         return (self.panel.GetTrip())
@@ -336,9 +339,12 @@ class EntryPanel(wx.Panel):
         self.SetBackgroundColour(wx.NamedColour("GREY25"))
 #        self.ship = wx.TextCtrl(self)
 #        self.ship.SetBackgroundColour("Yellow")
-        self._ship = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 35,-1),validator=CharValidator('no-alpha') )
-        self._ship.SetMaxLength(2)
+        self._ship = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 35,-1),validator=CharValidator('no-digit') )
+        self._ship.SetMaxLength(3)
         self._ship.SetFont(wx.Font(12, 74, 90, 92, False, "Arial"))
+        self._year = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 35,-1),validator=CharValidator('no-alpha') )
+        self._year.SetMaxLength(4)
+        self._year.SetFont(wx.Font(12, 74, 90, 92, False, "Arial"))
         self._trip = wx.TextCtrl(self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size(57, -1),validator=CharValidator('no-alpha'))
         self._trip.SetMaxLength(3)
         self._trip.SetFont(wx.Font(12, 74, 90, 92, False, "Arial"))
@@ -353,9 +359,11 @@ class EntryPanel(wx.Panel):
         #            self._trip = wx.TextCtrl(self)
         #            self._stn = wx.TextCtrl(self)
 
-        sizer = wx.FlexGridSizer(3, 2, 8, 8)
+        sizer = wx.FlexGridSizer(4, 2, 8, 8)
         sizer.Add(wx.StaticText(self, label="SHIP:"), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self._ship, 0, wx.EXPAND)
+        sizer.Add(wx.StaticText(self, label="YEAR:"), 0, wx.ALIGN_CENTER_VERTICAL)
+        sizer.Add(self._year, 0, wx.EXPAND)
         sizer.Add(wx.StaticText(self, label="TRIP:"), 0, wx.ALIGN_CENTER_VERTICAL)
         sizer.Add(self._trip, 0, wx.EXPAND)
         sizer.Add(wx.StaticText(self, label="STN:"), 0, wx.ALIGN_CENTER_VERTICAL)
@@ -372,22 +380,29 @@ class EntryPanel(wx.Panel):
 
         self.SetSizer(msizer)
 
-        self._ship.SetValue("00")
+        self._ship.SetValue("000")
+        self._year.SetValue("0000")
         self._trip.SetValue("000")
         self._stn.SetValue("000")
 
-    def SetBase(self, ship, trip, stn):
+    def SetBase(self, ship,year, trip, stn):
         self._ship.SetValue(ship)
+        self._year.SetValue(year)
         self._trip.SetValue(trip)
         self._stn.SetValue(stn)
 
     def GetBase(self):
-        return( '{0:0{width}}'.format(int(self._ship.GetValue()), width=2),
+        return( '{0:0{width}}'.format((self._ship.GetValue()), width=3),
+                '{0:0{width}}'.format(int(self._year.GetValue()), width=4),
             '{0:0{width}}'.format(int(self._trip.GetValue()), width=3),
             '{0:0{width}}'.format(int(self._stn.GetValue()), width=3) )
 
     def GetShip(self):
-        val = '{0:0{width}}'.format(int(self._ship.GetValue()), width=2)
+        val = (self._ship.GetValue()).upper()
+        return val
+
+    def GetYear(self):
+        val = '{0:0{width}}'.format(int(self._year.GetValue()), width=4)
         return val
 
     def GetTrip(self):
@@ -435,6 +450,8 @@ class CharValidator(wx.PyValidator):
             #print keycode
             key = chr(keycode)
             #print key
+            if self.flag == 'alpha-digit' and not (key in string.letters or key in string.digits):
+                return
             if self.flag == 'no-alpha' and key in string.letters:
                 return
             if self.flag == 'no-digit' and key in string.digits:
