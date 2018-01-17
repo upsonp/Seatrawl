@@ -885,7 +885,8 @@ class GraphFrame(wx.Frame):
 #        self.Shutdown_Data_Source()
 #        self.close_files("SET")
         self.clear_all_buttons()
-        self.on_Increment_tow_button(-1)
+        if self.RT_source:
+            self.on_Increment_tow_button(-1)
         self.flash_status_message("TOW ENDED")
 
     def on_Abort_button(self, event):
@@ -1370,8 +1371,9 @@ class GraphFrame(wx.Frame):
         self.DataSource.start()
         self.DataSource.start_data_feed()
 
-        self.log1.AppendText('Opening Data Port...' )
-        self.ShowMessage ("Opening Data port\nPlease Wait for data to display\nbefore Starting Logging ", "PLease wait..",-1)
+        if self.RT_source :
+            self.log1.AppendText('Opening Data Port...' )
+            self.ShowMessage ("Opening Data port\nPlease Wait for data to display\nbefore Starting Logging ", "PLease wait..",-1)
 
 
 # *****************************************************************
