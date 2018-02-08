@@ -24,6 +24,7 @@ from math import radians, cos, sin, asin, sqrt
 
 
 from Serial_Tools import *
+
 from ScanMarNmea import SMN_TOOLS
 import wxSerialConfigDialog
 
