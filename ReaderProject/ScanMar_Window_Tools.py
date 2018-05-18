@@ -336,7 +336,7 @@ class EntryPanel(wx.Panel):
         super(EntryPanel, self).__init__(parent)
         #            wx.Panel.__init__ ( self, parent, id = wx.ID_ANY, title = u"SET BASE HEADER", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
 
-        self.SetBackgroundColour(wx.NamedColour("GREY25"))
+        self.SetBackgroundColour(wx.Colour("GREY25"))
 #        self.ship = wx.TextCtrl(self)
 #        self.ship.SetBackgroundColour("Yellow")
         self._ship = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 35,-1),validator=CharValidator('no-digit') )
@@ -417,12 +417,12 @@ class EntryPanel(wx.Panel):
 
 
 # from wxpytohn demo library
-class CharValidator(wx.PyValidator):
+class CharValidator(wx.Validator):
     ''' Validates data as it is entered into the text controls. '''
 
     #----------------------------------------------------------------------
     def __init__(self, flag):
-        wx.PyValidator.__init__(self)
+        wx.Validator.__init__(self)
         self.flag = flag
         self.Bind(wx.EVT_CHAR, self.OnChar)
 
@@ -450,9 +450,9 @@ class CharValidator(wx.PyValidator):
             #print keycode
             key = chr(keycode)
             #print key
-            if self.flag == 'alpha-digit' and not (key in string.letters or key in string.digits):
+            if self.flag == 'alpha-digit' and not (key in string.ascii_letters or key in string.digits):
                 return
-            if self.flag == 'no-alpha' and key in string.letters:
+            if self.flag == 'no-alpha' and key in string.ascii_letters:
                 return
             if self.flag == 'no-digit' and key in string.digits:
                 return

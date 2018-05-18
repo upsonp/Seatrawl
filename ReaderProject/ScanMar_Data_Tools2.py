@@ -13,12 +13,12 @@ import json
 from math import radians, cos, sin, asin, sqrt
 
 
-from Serial_Tools import *
+from ScanMar_Serial_Tools import *
 
-from ScanMarNmea import SMN_TOOLS
+from ScanMar_Nmea import SMN_TOOLS
 import wxSerialConfigDialog
 
-from window_tools import *
+from ScanMar_Window_Tools import *
 
 
 class StatusVars(object):
@@ -240,7 +240,9 @@ class DataVars(object):
 #   ########  the various log files for data and events #################
     # I'm opening for append and unbuffered,, the append is to get around a repeat of a set#
     # and avoiding the 'do you want to over write or ... ' issue.. this is temp fix..
-    # the unbuffered is CYA in case of crashes
+    # the unbuffered is CYA in case of crashes HOWEVER in python 3 the unbuffering required the file to be
+    #  opened in binary mode causes a issue with the unicode meaning we have to encode the string to bytes
+    # (it wont take a string argument)  hence the str(xx + yy +\n).encode()  type stuff
 #   #####################################################################
     def write_Jdata(self,JDict):
         if self.JSON_fp == None:
@@ -252,61 +254,62 @@ class DataVars(object):
     def write_CSVdata(self,JDict):
             flag = ""
             if self.CSV_fp ==None:
-                self.CSV_fp= open(self.CSVFileName,"a",0)
+                self.CSV_fp= open(self.CSVFileName,"ab",0)
 
-                for ele, val in JDict.iteritems():
+                for ele, val in JDict.items():
                     if ele == "DATETIME":
-                        self.CSV_fp.write('{:>10}'.format('DATE') +','+ '{:>10}'.format('TIME')+',', )
+                        self.CSV_fp.write(str('{:>10}'.format('DATE') +','+ '{:>10}'.format('TIME')+',',).encode() )
                     elif ele == "LAT" or ele == "LON" :
-                        self.CSV_fp.write('{:>10}'.format(ele+'_D')+','+'{:>10}'.format(ele+'_M')+',', )
+                        self.CSV_fp.write(str('{:>10}'.format(ele+'_D')+','+'{:>10}'.format(ele+'_M')+',',).encode() )
                     else:
-                        self.CSV_fp.write('{:>10}'.format(ele) + ',',)
+                        self.CSV_fp.write(str('{:>10}'.format(ele) + ',',).encode())
                     if isinstance(val, dict):
-                            self.CSV_fp.write('{:>10}'.format('QF') +','+ '{:>10}'.format('VA')+',', )
+                            self.CSV_fp.write(str('{:>10}'.format('QF') +','+ '{:>10}'.format('VA')+',',).encode() )
 
 #                self.CSVwriter = csv.writer(self.CSV_fp)
 #                self.CSVwriter.writerow(JDict.keys())
                     flag = '{:>10}'.format("OnBottom")
             else:
-                for ele, val in JDict.iteritems():
+                for ele, val in JDict.items():
                     if isinstance(val, dict):
                         for k, v in val.items():
-                            self.CSV_fp.write('{:>10}'.format(v) + ',', )
+                            self.CSV_fp.write(str('{:>10}'.format(v) + ',',).encode() )
                     else:
                         if ele == "DATETIME":
                             DT = val.split()
-                            self.CSV_fp.write('{:>10}'.format(DT[0])+','+ '{:>10}'.format(DT[1])+',', )
+                            self.CSV_fp.write(str('{:>10}'.format(DT[0])+','+ '{:>10}'.format(DT[1])+',',).encode() )
                         elif  ele == "LAT"  or  ele == "LON":
                                 L = val.split()
-                                self.CSV_fp.write('{:>10}'.format(L[0]) + ',' + '{:>10}'.format(L[1]) + ',', )
+                                self.CSV_fp.write(str('{:>10}'.format(L[0]) + ',' + '{:>10}'.format(L[1]) + ',',).encode() )
                         else:
-                            self.CSV_fp.write('{:>10}'.format(val) + ',', )
+                            self.CSV_fp.write(str('{:>10}'.format(val) + ',',).encode() )
                 flag = '{:>10}'.format('B') if self.status.OnBottom else '{:>10}'.format('W')
 
-            self.CSV_fp.write(flag+'\n')
+            self.CSV_fp.write(str(flag+'\n').encode())
 
 #                self.CSVwriter.writerow(JDict.values())
 
     def write_RawData(self,Raw_String):
         if  self.RAW_fp == None:
-            self.RAW_fp = open(self.RAWFileName,"a",0)
+            self.RAW_fp = open(self.RAWFileName,"ab",0)
 
         for zz in Raw_String :
-            self.RAW_fp.write(str(Raw_String[zz]) + '\n')
+            aline = str(Raw_String[zz]) + '\n'
+            self.RAW_fp.write(aline.encode())
 
 
 
     def write_MissionLog(self, Event_String):
         if self.TripLog_fp == None:
             if os.path.isfile(self.MISIONFileName):
-                self.TripLog_fp = open(self.MISIONFileName, "a",0)
+                self.TripLog_fp = open(self.MISIONFileName, "a")
             else:
                 msg = "PC CLOCK           , SHIPTRIPSET    ,   FEED ClOCK,       EVENT     , ShipSND, NetSND,   LAT    ,    LONG,     INFO"
 
-                self.TripLog_fp = open(self.MISIONFileName, "w",0)
+                self.TripLog_fp = open(self.MISIONFileName, "w")
                 self.TripLog_fp.write(msg + '\n')
 
-        self.TripLog_fp.write(str(Event_String) + '\n')
+        self.TripLog_fp.write(Event_String + '\n')
 
     def close_files(self,Which):
         if Which == "ALL" :

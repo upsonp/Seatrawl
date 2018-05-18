@@ -17,14 +17,14 @@ class DataGen2(object):
 		self.data = self.init = init
 		self.FileName = FileName
 		self.f = open(self.FileName,"r")
-		print "File opened"
+		print ("File opened")
 
 	def next(self):
 		line=self.f.readline()
 		return line
 
 	def close_infile(self):
-		print "closing file"
+		print ("closing file")
 		self.f.close()
 
 	def rewind(self):
@@ -35,7 +35,7 @@ def on_send_timer(datagen,ser) :
 	if "GLL" in line:
 		time.sleep(1.0)
 	if line !=[] :
-		x = ser.write(line)
+		x = ser.write(line.encode())
 		return line
 	else:
 		return ([])
@@ -47,9 +47,9 @@ def kbfunc():
 
 def main() :
 	if len(sys.argv) != 3:
-		print "supply port and data file name"
+		print ("supply port and data file name")
 		quit()
-	print sys.argv[0], sys.argv[1], sys.argv[2]
+	print (sys.argv[0], sys.argv[1], sys.argv[2])
 
 
 	FileName= sys.argv[2]
@@ -59,17 +59,17 @@ def main() :
 
 	port = str(sys.argv[1])
 	Nseconds = 0.02
-	print "reading",FileName," from port ",port
+	print ("reading",FileName," from port ",port)
 	datagen = DataGen2(FileName)
-	print "trying for serial port ",port
+	print ("trying for serial port ",port)
 	try: 
 		ser = serial.Serial(port, 4800)
-	except serial.SerialException,e:
-		print "error opening serial port: "+port+" " + str(e)
+	except serial.SerialException as e:
+		print ("error opening serial port: "+port+" " + str(e))
 		return(False)
-	print "port open"
+	print ("port open")
 
-	print " Press p to pause ; g to go ; l to loop ; f faster ; s slower ; z toggle silent mode ; q to quit gracefully"
+	print (" Press p to pause ; g to go ; l to loop ; f faster ; s slower ; z toggle silent mode ; q to quit gracefully")
 
 
 	x = "x"
@@ -99,18 +99,18 @@ def main() :
 				sys.stdout.write("\a") # plays a beep to say your at limit
 			else:
 				Nseconds = Nseconds - 0.005
-			print Nseconds
+			print (Nseconds)
 			
 		if kk == 's':
 			Nseconds = Nseconds + 0.005
-			print Nseconds
+			print (Nseconds)
 	
 		if Nseconds > 0:	
 			time.sleep(Nseconds)
 		if not paused:
 			x = on_send_timer(datagen,ser)
 			if not silent:
-				print x,
+				print (x,)
 			if x =='' and loop:
 				datagen.rewind()
 		
@@ -118,7 +118,7 @@ def main() :
 	datagen.close_infile()
 
 	ser.close()
-	print 'bye - port closed'
+	print ('bye - port closed')
 
 if __name__ == '__main__':
 		main()

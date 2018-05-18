@@ -1,9 +1,9 @@
 import serial
 import time
 import threading
-import Queue
+import queue
 import io
-import ScanMarNmea as SMN
+import ScanMar_Nmea as SMN
 import pynmea2
 from collections import OrderedDict
 
@@ -74,7 +74,7 @@ class Read_Serial_Stuff(threading.Thread):
     def open_Port(self):
         try:
             self.ser.open()
-        except Exception, e:
+        except serial.SerialException as e :
 #            print "error open serial port: "+self.ser.port+" " + str(e)
              return(False)
         self.flush()
@@ -90,7 +90,7 @@ class Read_Serial_Stuff(threading.Thread):
         if self.ser.isOpen():
             self.ser.flushInput()
             time.sleep(0.05)
-            line = self.ser.readline()  # ensure a full line is in buffer by discarding any stub
+            line = self.ser.readline() # ensure a full line is in buffer by discarding any stub
 
     def start_data_feed(self):
         self.flush()
@@ -100,9 +100,11 @@ class Read_Serial_Stuff(threading.Thread):
         self.wait = True
 
     def shut_down(self):
+        self.pause_data_feed()
         self.shutdown = True
         time.sleep(0.05)   # avoid pulling the rug out to quick
-        self.close_Port()
+        if self.is_port_open():
+            self.close_Port()
 
     def run (self):
         if (self.ser.isOpen() == False):
@@ -127,25 +129,24 @@ class Read_Serial_Stuff(threading.Thread):
                 retrys = 0  # we don't want to hang or stop trying, we want the main program to tell us what to do
 
         self.queue.put("FINISHED")
-        self.close_Port()
+        if self.is_port_open() :
+            self.close_Port()
         return
 
-# for debugging
-    def Manual_ReadLine(self):
-        str = ""
-        while 1:
-            ch = self.ser.read()
-            if (ch == '\r' or ch == ''):
-                break
-            str += ch
-        return(str)
-
+# when changed to python 3.65 from 2.8 started getting issue on shutdown causing exception
+# relating to overlapping read io issue or port already closed,,  the try-except is to swallow the
+# error message as a QAD fix for now.. DRS
     def next(self):
-#xx        time.sleep(0.1)
+
         line= ''
-#xx        if self.ser.inWaiting()>80:
-        line = self.ser.readline()
-#            line = self.Manual_ReadLine()
+
+        if not self.shutdown:
+            if self.is_port_open () :
+                try:
+                    line = self.ser.readline().decode()
+                except :
+                    pass
+
         return (line)
 
 
@@ -219,7 +220,7 @@ class DataGen_que(threading.Thread):
 
 
 
-        self.myQueue = Queue.Queue()
+        self.myQueue = queue.Queue()
 
         if self.source != "SERIAL":
             self.datafile = info
@@ -263,7 +264,7 @@ class DataGen_que(threading.Thread):
                     try:
                         msg = pynmea2.parse(line)
                     except pynmea2.nmea.ChecksumError:   # this needs more thought on handling
-                        print "Checksum issue"
+                        print ("Checksum issue")
                         block["OK"] = False
                         self.status = "CHECKSUM_ERROR"
                         abort_block = True

@@ -446,7 +446,7 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
 
 #                current['OK'] = True
             else:
-                print "missing key, not in GroupDict=", sentence_type
+                print ("missing key, not in GroupDict=", sentence_type)
 #                current['OK'] = False
 
 
@@ -465,8 +465,8 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
                     self.current[msg.sentence_type] = msg
                 self.current['OK'] = True
             else:
-                print "missing key, not in GroupDict=", msg.sentence_type
+                print ("missing key, not in GroupDict=", msg.sentence_type)
                 self.current['OK'] = False
-#            print "in SCM instance",msg,"!!"
+#            print ("in SCM instance",msg,"!!")
         else:
-            print "NOT SCM instance",msg,"!!"
+            print ("NOT SCM instance",msg,"!!")

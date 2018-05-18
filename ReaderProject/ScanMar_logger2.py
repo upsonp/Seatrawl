@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# ScanMar_logger.py   D.Senciall  August 2017
-# update June 1 2015 to fix incorrect presure conversion in realtime data reader
+# ScanMar_logger2.py   D.Senciall  August 2017
+#
 """
 Some Elements BASED ON CODE SAMPLE FROM: matplotlib-with-wxpython-guis by E.Bendersky
 Eli Bendersky (eliben@gmail.com)
@@ -22,15 +22,12 @@ from  datetime import datetime, timedelta
 import json
 from math import radians, cos, sin, asin, sqrt
 
-
-from Serial_Tools import *
-
-from ScanMarNmea import SMN_TOOLS
+from ScanMar_Serial_Tools import *
+from ScanMar_Nmea import SMN_TOOLS
+from ScanMar_Window_Tools import *
+from ScanMar_Data_Tools2 import StatusVars,DataVars
 import wxSerialConfigDialog
 
-from window_tools import *
-
-from ScanMar_Tools2 import StatusVars,DataVars
 
 ID_START_RT = wx.NewId()
 ID_STOP_RT = wx.NewId()
@@ -38,8 +35,8 @@ ID_START_ARC = wx.NewId()
 ID_STOP_ARC = wx.NewId()
 ID_SER_CONF = wx.NewId()
 
-VERSION = "V1.1 Feb 2018"
-TITLE = "ScanMar_Logger"
+VERSION = "V1.2 May 2018"
+TITLE = "ScanMar_Logger2"
 
 
 # ###################################################################
@@ -76,10 +73,10 @@ class GraphFrame(wx.Frame):
 # for the mission and the serial configuration dialogue is displayed to get setup
         if not self.data.read_cfg(self.ser):
             self.data.set_default_com_cfg(self.ser)
-            self.data.on_ser_config(-1)
+            self.on_ser_config(-1)
 
 # queue that will feed taht data blocks back to this display system within the re-draw loop
-        self.BQueue = Queue.Queue()
+        self.BQueue = queue.Queue()
 
 
 
@@ -100,7 +97,7 @@ class GraphFrame(wx.Frame):
 
 
         self.panel= wx.Panel(self)  # Create a Panel instance
-        self.panel.SetBackgroundColour(wx.NamedColour("WHEAT"))
+        self.panel.SetBackgroundColour(wx.Colour("WHEAT"))
 
         self.populate_main_panel()
 
@@ -710,10 +707,10 @@ class GraphFrame(wx.Frame):
 
 
     def onF4(self, event):
-        print "F4 hit",event
+        print ("F4 hit",event)
 
     def onF2(self, event):
-       print "F2 hit",event
+       print ("F2 hit",event)
 # ########### -----------------------------------
             
 ################### ON_REDRAW_TIMER ##########################################################
@@ -880,9 +877,9 @@ class GraphFrame(wx.Frame):
             if FileName != None:
 
                 Source = "ARCHIVE"
-                self.basename = os.path.splitext(os.path.basename(FileName))[0]
+                self.data.basename = os.path.splitext(os.path.basename(FileName))[0]
 
-                self.data.make_SYTS(self.basename)
+                self.data.make_SYTS(self.data.basename)
                 self.setup_new_tow()
 
                 self.status.DataSource = DataGen_que(self, "ARCHIVE", FileName, self.BQueue)
@@ -959,12 +956,12 @@ class GraphFrame(wx.Frame):
             self.data.save_cfg(self.ser)
             self.data.close_files("ALL")
             self.data.set_FileNames()
-            self.disp_BaseName.Data_text.SetValue(str(self.basename))
+            self.disp_BaseName.Data_text.SetValue(str(self.data.basename))
 
-        self.basename = self.data.make_base_name()
+        self.data.basename = self.data.make_base_name()
         self.data.WarpOut = '0'
 
-        self.disp_BaseName.Data_text.SetValue(self.basename)
+        self.disp_BaseName.Data_text.SetValue(self.data.basename)
         self.disp_text["ET-DIST"].Data_text["ET"].SetValue('00:00:00')
         self.disp_text["ET-DIST"].Data_text["DIST"].SetValue('0000.0')
         self.Warp_text.SetValue('')
