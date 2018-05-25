@@ -1,7 +1,11 @@
 import serial
 import time
 import threading
-import queue
+try:
+    import queue
+
+except:
+    import Queue as queue
 import io
 import ScanMar_Nmea as SMN
 import pynmea2
@@ -107,10 +111,8 @@ class Read_Serial_Stuff(threading.Thread):
             self.close_Port()
 
     def run (self):
-        if (self.ser.isOpen() == False):
+        if (self.is_port_open() == False):
             self.open_Port()
-#        self.sio = io.TextIOWrapper(io.BufferedReader(self.ser),newline = '\n')
-#        self.sio.flush()
         self.ser.flush()
 
         retrys = 0
@@ -120,7 +122,8 @@ class Read_Serial_Stuff(threading.Thread):
                 self.queue.put(line)
                 retrys = 0
             else :
-                retrys = retrys +1
+                if not self.wait:
+                    retrys = retrys +1
 #                time.sleep (0.05)
 
             if retrys > 100:

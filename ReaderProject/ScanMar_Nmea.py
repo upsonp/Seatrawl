@@ -330,8 +330,9 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         Raw_String[Sensor_Element] = y
 
     def process_gll(self,x,disp_text,Raw_String,JDict):
-        gps_lat_string = str(x.lat[:2] + "\xb0 " + '{:>6.6}'.format(x.lat[2:]) +"\' " +  x.lat_dir)
-        gps_lon_string  = str(x.lon[1:3] + "\xb0 " + '{:>6.6}'.format(x.lon[3:]) + "\' " + x.lon_dir)
+        t = u"\u00b0"
+        gps_lat_string = str(x.lat[:2] + "\xb0" + " "+'{:>6.6}'.format(x.lat[2:]) +"\' " +  x.lat_dir)
+        gps_lon_string  = str(x.lon[1:3] + "\xb0" + " "+'{:>6.6}'.format(x.lon[3:]) + "\' " + x.lon_dir)
 #        disp_text["GPS"].Data_text["LA"].SetValue(gps_lat_string)
         Sensor_Element = "LAT"
         disp_text[Sensor_Element].update_values(gps_lat_string, "X")
