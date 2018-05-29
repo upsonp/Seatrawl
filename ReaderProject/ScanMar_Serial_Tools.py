@@ -107,6 +107,8 @@ class Read_Serial_Stuff(threading.Thread):
         self.pause_data_feed()
         self.shutdown = True
         time.sleep(0.05)   # avoid pulling the rug out to quick
+
+    def close_port(self):
         if self.is_port_open():
             self.close_Port()
 
@@ -132,8 +134,7 @@ class Read_Serial_Stuff(threading.Thread):
                 retrys = 0  # we don't want to hang or stop trying, we want the main program to tell us what to do
 
         self.queue.put("FINISHED")
-        if self.is_port_open() :
-            self.close_Port()
+        self.close_port()
         return
 
 # when changed to python 3.65 from 2.8 started getting issue on shutdown causing exception
@@ -143,12 +144,12 @@ class Read_Serial_Stuff(threading.Thread):
 
         line= ''
 
-        if not self.shutdown:
-            if self.is_port_open () :
-                try:
+#        if not self.shutdown:
+        if self.is_port_open () :
+#                try:
                     line = self.ser.readline().decode()
-                except :
-                    pass
+#                except :
+#                    pass
 
         return (line)
 

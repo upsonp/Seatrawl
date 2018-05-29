@@ -60,6 +60,7 @@ class GraphFrame(wx.Frame):
 
         self.statusbar = self.create_status_bar()
 
+
         #build the display
         self.menubar = wx.MenuBar()
         self.populate_menu()
@@ -102,8 +103,9 @@ class GraphFrame(wx.Frame):
         # the on_redraw_timer method
         #  1000 ms; ie check  once a second;  since data rate is ~1 second per block (multiple nmea lines)
         self.redraw_timer = wx.Timer(self)
-        self.Bind(wx.EVT_TIMER, self.on_redraw_timer, self.redraw_timer)        
+        self.Bind(wx.EVT_TIMER, self.on_redraw_timer, self.redraw_timer)
         self.redraw_timer.Start(500)
+
 #        self.redraw_timer.Stop()
 
 # **************************** End of GraphFrame Init **********************
@@ -201,7 +203,6 @@ class GraphFrame(wx.Frame):
         # WARP ENTRY IS A NESTED SET OF OBJECTS
         self.warpbox = wx.BoxSizer(wx.VERTICAL)
 
-
         # WARP ENTER BUTTON
         warpfont = wx.Font(12, wx.DECORATIVE,wx.NORMAL, wx.BOLD)
         self.Warp_button  = wx.Button(apanel, -1, "Enter WarpOut(m)\n(F8)  ")
@@ -276,7 +277,6 @@ class GraphFrame(wx.Frame):
 
         self.SetAcceleratorTable(accel_tbl)
 
-
         # standard database colours  http://xoomer.virgilio.it/infinity77/wxPython/Widgets/wx.ColourDatabase.html
 
         # HORIZONTAL BOX 0 (hb0) HOLDS THE BUTTONS
@@ -289,12 +289,15 @@ class GraphFrame(wx.Frame):
         self.hbox0.Add(self.LoggerStart_button, border=5, flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
         self.hbox0.Add(self.BottomStart_button, border=5, flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
         self.hbox0.AddSpacer(5)
-        self.hbox0.Add(self.warpbox, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+
+        self.hbox0.Add(self.WRPbox, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+
         self.hbox0.AddSpacer(5)
         self.hbox0.Add(self.BottomEnd_button, border=5, flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
         self.hbox0.Add(self.LoggerEnd_button, border=5, flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
         self.hbox0.AddSpacer(8)
         self.hbox0.Add(self.Abort_button, border=5, flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
+
 
     def populate_logger_strip(self,apanel):
 
