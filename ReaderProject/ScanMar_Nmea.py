@@ -300,12 +300,17 @@ class SMN_TOOLS:  # these are the values are valid to place on the screen
         'TS_O': "",
 #        'TS_F': "",
         'DP_H': "",
+        'DPTM_D': "",   #BIO
+        'DPTM_T': "",   #BIO
+        'DVTLAS_T': "", #BIO
+        'DVTLAM_D': "", #BIO
     }
     def process_sm2(self,y,disp_text,Raw_String,JDict):
         if (y.sensor == 'DVTLAM' or y.sensor == 'CVTLAM') and y.measurement_id == '':  # issue with CVTLAM having no id value in test data
             y.measurement_id = 'S'
-        elif  y.sensor == "DP" :  # DP does not have an id field so provide a dummy
-            y.measurement_id = "H"
+        elif  y.sensor == "DP" :  # DP does not have an id field ; also map it to the DPTM sensors field
+            y.sensor = "DPTM"
+            y.measurement_id = "D"
 
         Sensor_Element = y.sensor +  '_' + y.measurement_id
 

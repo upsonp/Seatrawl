@@ -78,6 +78,8 @@ class DataVars(object):
         self.CSV_fp = None
         self.TripLog_fp = None
 
+    # JDICT valeues go into the csv file irregardlesss of if present; fields not in JDICT taht are found get appended
+    #  to the end of the CSV records
     def initialize_Jdict(self):
 
         self.JDict["DATETIME"] = ""
@@ -110,7 +112,8 @@ class DataVars(object):
         self.JDict['TS_C'] = ""
         self.JDict['TS_O'] = ""
         self.JDict['TS_F'] = ""
-        self.JDict['DP_H'] = ""
+        self.JDict['DPTM_D'] = ""   # Mapped DT to this one in the nmea parser for simplicity
+        self.JDict['DPTM_T'] = ""   # BIO has this one
         self.JDict['WLPS'] = ""
         self.JDict['WLPO'] = ""
         self.JDict['WLSS'] = ""
@@ -119,6 +122,11 @@ class DataVars(object):
         self.JDict['WTS'] = ""
         self.JDict['WST'] = ""
 
+# BIO Channels,  if preset they will auto add to the end of the Jdict
+#       self.JDict['DPTM_D'] = ""
+#       self.JDict['DPTM_T'] = ""
+#       self.JDict'DVTLAS_T'] = ""
+#       self.JDict['DVTLAM_D' = ""
 
 
     def make_base_name(self):
@@ -353,7 +361,7 @@ class DataVars(object):
             except:
                 ser.applySettingsDict(commsettings)    # pyserial pre v 3.0
 
-            fp.close()
+#            fp.close()
         except:
             return (False)
 

@@ -35,7 +35,7 @@ ID_START_ARC = wx.NewId()
 ID_STOP_ARC = wx.NewId()
 ID_SER_CONF = wx.NewId()
 
-VERSION = "V1.2 May 2018"
+VERSION = "V1.21 May 2018"
 TITLE = "ScanMar_Logger2"
 
 
@@ -104,7 +104,7 @@ class GraphFrame(wx.Frame):
         #  1000 ms; ie check  once a second;  since data rate is ~1 second per block (multiple nmea lines)
         self.redraw_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_redraw_timer, self.redraw_timer)
-        self.redraw_timer.Start(500)
+        self.redraw_timer.Start(300)
 
 #        self.redraw_timer.Stop()
 
@@ -219,9 +219,9 @@ class GraphFrame(wx.Frame):
         self.Warp_text.Bind( wx.EVT_TEXT_ENTER,self.OnWarpTyped)
         self.Bind(wx.EVT_BUTTON, self.on_Warp_button, self.Warp_button)
 
-        self.WRPbox = wx.BoxSizer(wx.VERTICAL)
-        self.WRPbox.AddSpacer(2)
-        self.WRPbox.Add(self.warpbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
+#        self.WRPbox = wx.BoxSizer(wx.VERTICAL)
+#        self.WRPbox.AddSpacer(2)
+#        self.WRPbox.Add(self.warpbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
         # OFF BOTTOM BUTTON
         self.BottomEnd_button = wx.Button(apanel, -1,   "Off Bottom \nEnd Fishing Tow\n(F5)")
@@ -290,7 +290,8 @@ class GraphFrame(wx.Frame):
         self.hbox0.Add(self.BottomStart_button, border=5, flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
         self.hbox0.AddSpacer(5)
 
-        self.hbox0.Add(self.WRPbox, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+        self.hbox0.Add(self.warpbox, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+#        self.hbox0.Add(self.WRPbox, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
         self.hbox0.AddSpacer(5)
         self.hbox0.Add(self.BottomEnd_button, border=5, flag=wx.ALL | wx.ALIGN_CENTER_HORIZONTAL)
@@ -394,9 +395,9 @@ class GraphFrame(wx.Frame):
 
         # TRAWL SOUNDER
         hbox[4] = wx.BoxSizer(wx.HORIZONTAL)
-        disp_text4 = OrderedDict([ ("TS_H", ''),("TS_O",''),("TS_C",''),("DP_H",'')])
+        disp_text4 = OrderedDict([ ("TS_H", ''),("TS_O",''),("TS_C",'')])
 
-        x2 = OrderedDict([("TS_H", 'Height'), ("TS_O", 'Opening'), ("TS_C", 'Clear'),("DP_H",'TrawlDepth')])
+        x2 = OrderedDict([("TS_H", 'Height'), ("TS_O", 'Opening'), ("TS_C", 'Clear')])
         for x in disp_text4:
             disp_text4[x] = RollingDialBox_multi(apanel, -1, x2[x], xx, '0', 60, wx.BLACK, wx.VERTICAL,afontsize)
             #        self.hbox3.Add(self.disp_label3, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
@@ -408,8 +409,25 @@ class GraphFrame(wx.Frame):
 #        self.hbox4.Add(self.disp_label4, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 #        self.hbox4.Add(self.disp_text4["TS"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
-        # TIME DATE
+        # TRAWL SOUNDER/TEMP
         hbox[5] = wx.BoxSizer(wx.HORIZONTAL)
+        disp_text5 = OrderedDict([ ("DPTM_D", ''), ("DPTM_T", '')])
+
+        x2 = OrderedDict([
+                              ("DPTM_D", 'TrawlDepth'), ("DPTM_T", 'TrawlTemp')])
+        for x in disp_text5:
+            disp_text5[x] = RollingDialBox_multi(apanel, -1, x2[x], xx, '0', 60, wx.BLACK, wx.VERTICAL, afontsize)
+                #        self.hbox3.Add(self.disp_label3, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+        for x in disp_text5:
+            hbox[5].Add(disp_text5[x], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+
+        #        self.disp_text4["TS"] = RollingDialBox_multi(self.panel, -1, "TS (m)", xxw, '0', 50,wx.BLACK,wx.VERTICAL)
+        #        self.hbox4 = wx.BoxSizer(wx.VERTICAL)
+        #        self.hbox4.Add(self.disp_label4, border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+        #        self.hbox4.Add(self.disp_text4["TS"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+
+        # TIME DATE
+        hbox[6] = wx.BoxSizer(wx.HORIZONTAL)
 
 #        zone = time.tzname[time.daylight]
 
@@ -419,14 +437,14 @@ class GraphFrame(wx.Frame):
 
         disp_text6a["TIMEDATE"] = RollingDialBox_multi(apanel, -1, "PC TIME", xxw, '0', 155,
                                                             wx.BLACK, wx.VERTICAL, afontmiddle +2)
-        hbox[5].Add(disp_text6a["TIMEDATE"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+        hbox[6].Add(disp_text6a["TIMEDATE"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
-        disp_text5 = OrderedDict([ ("ET-DIST", '')])
+        disp_text6 = OrderedDict([ ("ET-DIST", '')])
         xxw = OrderedDict([("ET", '00:00:00'),("DIST","00.000")])
-        disp_text5["ET-DIST"] = RollingDialBox_multi(apanel, -1, "ET-DIST (Nm)",xxw, '0',160,
+        disp_text6["ET-DIST"] = RollingDialBox_multi(apanel, -1, "ET-DIST (Nm)",xxw, '0',160,
                                                      wx.RED,wx.VERTICAL,afontbigger)
 
-        hbox[5].Add(disp_text5["ET-DIST"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
+        hbox[6].Add(disp_text6["ET-DIST"], border=5, flag=wx.ALL | wx.ALIGN_CENTER_VERTICAL)
 
         self.disp_label2= RollingDialBox_multi_static(apanel, -1,"---- Log ----", timelabel, '0',80,wx.BLUE,
                                                       wx.VERTICAL,afontsize)
@@ -467,6 +485,7 @@ class GraphFrame(wx.Frame):
         self.disp_text.update(disp_text3)
         self.disp_text.update(disp_text4)
         self.disp_text.update(disp_text5)
+        self.disp_text.update(disp_text6)
         self.disp_text.update(disp_text8)
         self.disp_text.update(disp_text6a)
         self.disp_text.update(disp_text11)
@@ -478,7 +497,7 @@ class GraphFrame(wx.Frame):
 
         InfoBx = wx.StaticBox(apanel,-1,"INFO")
         self.Infobox = wx.StaticBoxSizer(InfoBx, wx.VERTICAL)
-        self.Infobox.Add(hbox[5], 0, flag=wx.ALIGN_LEFT | wx.TOP)
+        self.Infobox.Add(hbox[6], 0, flag=wx.ALIGN_LEFT | wx.TOP)
         self.Infobox.Add(self.disp_BaseName, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
         TLTbx = wx.StaticBox(apanel,-1,"Tilt Sensor")
@@ -492,6 +511,10 @@ class GraphFrame(wx.Frame):
         TSbx = wx.StaticBox(apanel,-1,"Trawl Sounder")
         self.TSbox = wx.StaticBoxSizer(TSbx, wx.VERTICAL)
         self.TSbox.Add(hbox[4], 0, flag=wx.ALIGN_LEFT | wx.TOP)
+
+        DPTMbx = wx.StaticBox(apanel,-1,"Depth Temp Sensor")
+        self.DTbox = wx.StaticBoxSizer(DPTMbx, wx.VERTICAL)
+        self.DTbox.Add(hbox[5], 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
         DBSbx = wx.StaticBox(apanel,-1,"Ship Sounder")
         self.DBSbox = wx.StaticBoxSizer(DBSbx, wx.VERTICAL)
@@ -509,6 +532,8 @@ class GraphFrame(wx.Frame):
         LRbox.Add(self.DWbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
         LRbox.AddSpacer(4)
         LRbox.Add(self.TSbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
+        LRbox.AddSpacer(4)
+        LRbox.Add(self.DTbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
         LRbox.AddSpacer(4)
         LRbox.Add(self.TLTbox, 0, flag=wx.ALIGN_LEFT | wx.TOP)
 
