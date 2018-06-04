@@ -59,6 +59,7 @@ class DataVars(object):
         self.initialize_Jdict()
 
         self.dataDir = "C:\ScanMar_data"
+        self.TripDataDir = ""
 
         self.ShipTripSet = {"YEAR": '1900', "SHIP": "TEL", "TRIP": "000", "SET": "000"}
 
@@ -141,11 +142,20 @@ class DataVars(object):
             #        self.basename = self.make_base_name()
             #        self.disp_BaseName.Data_text.SetValue(str(self.BaseName))
 
+            # directory to store recorded data and logs
+        if not os.path.exists(self.dataDir):
+            os.makedirs(self.dataDir)
 
-        self.CSVFileName = self.dataDir + "\\" + self.basename + ".csv"
-        self.RAWFileName = self.dataDir + "\\" + self.basename + ".pnmea"
-        self.JSONFileName = self.dataDir + "\\" + self.basename + ".json"
-        self.MISIONFileName = self.dataDir + "\\" + self.basename[0:12] + ".log"
+        self.TripDataDir = self.dataDir + "\\" + self.basename[0:12]
+
+            # directory to store recorded data and logs
+        if not os.path.exists(self.TripDataDir):
+            os.makedirs(self.TripDataDir)
+
+        self.CSVFileName = self.TripDataDir + "\\" + self.basename + ".csv"
+        self.RAWFileName = self.TripDataDir + "\\" + self.basename + ".pnmea"
+        self.JSONFileName = self.TripDataDir + "\\" + self.basename + ".json"
+        self.MISIONFileName = self.TripDataDir + "\\" + self.basename[0:12] + ".log"
 
     def increment_tow(self):
         new = self.ShipTripSet["SET"]
@@ -168,10 +178,10 @@ class DataVars(object):
             dt = time.strftime('%Y-%m-%dT%H:%M:%S')
 
             #        if self.LoggerRun:
-            if self.JDict["DP_H"] != '':
+            if self.JDict["DPTM_D"] != '':
                 msg = self.basename + ", " + self.JDict["DATETIME"] + ", " + "{:<10}".format(flag) + ", " + self.JDict[
                     "DBS"] + ", " + \
-                      self.JDict["DP_H"]["measurement_val"] + ",  " + self.JDict["LAT"] + ", " + self.JDict["LON"]
+                      self.JDict["DPTM_D"]["measurement_val"] + ",  " + self.JDict["LAT"] + ", " + self.JDict["LON"]
             else:
 
                 msg = self.basename + ", " + self.JDict["DATETIME"] + ", " + "{:<10}".format(flag) + ", " + self.JDict[

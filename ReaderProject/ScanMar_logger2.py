@@ -79,8 +79,8 @@ class GraphFrame(wx.Frame):
         self.data = DataVars(self,self.status)
 
         # directory to store recorded data and logs
-        if not os.path.exists(self.data.dataDir):
-            os.makedirs(self.data.dataDir)
+#        if not os.path.exists(self.data.dataDir):
+#            os.makedirs(self.data.dataDir)
 
         # we need a serial instance to allow the  serial config dialogue to function
         self.ser = serial.Serial()
