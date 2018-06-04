@@ -9,7 +9,7 @@ from time import sleep
 
 def kbfunc():
 
-    return msvcrt.getch() if msvcrt.kbhit() else '0'
+    return msvcrt.getwch() if msvcrt.kbhit() else '0'
 
 port = "com3"
 ser = serial.Serial(port, 9600, timeout=0)
@@ -40,7 +40,7 @@ while True:
 		if not paused :
 			data = ser.readline()
 			if len(data) > 0:
-				print  data,
+				print  (data, end='')
 
 		sleep(Nseconds)
 

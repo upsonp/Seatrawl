@@ -104,7 +104,7 @@ class GraphFrame(wx.Frame):
         #  1000 ms; ie check  once a second;  since data rate is ~1 second per block (multiple nmea lines)
         self.redraw_timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.on_redraw_timer, self.redraw_timer)
-        self.redraw_timer.Start(300)
+        self.redraw_timer.Start(100)
 
 #        self.redraw_timer.Stop()
 

@@ -41,7 +41,7 @@ def on_send_timer(datagen,ser) :
 
 def kbfunc():
 
-    return msvcrt.getch() if msvcrt.kbhit() else '0'
+    return msvcrt.getwch() if msvcrt.kbhit() else '0'
 
 def main() :
 	if len(sys.argv) != 2:
@@ -103,7 +103,7 @@ def main() :
 		if not paused:
 			x = on_send_timer(datagen,ser)
 			if not silent:
-				print x,
+				print (x, end='')
 			if x =='' and loop:
 				datagen.rewind()
 		
