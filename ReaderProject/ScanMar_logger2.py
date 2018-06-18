@@ -15,7 +15,10 @@ import os
 #import random
 import sys
 import wx
-import wx.adv
+try:
+    import wx.adv
+except:
+        pass
 from collections import OrderedDict
 import time
 import serial
@@ -992,7 +995,10 @@ class GraphFrame(wx.Frame):
 
     def OnAbout(self,event):
         """ Show About Dialog """
-        info = wx.adv.AboutDialogInfo()
+        try:
+            info = wx.adv.AboutDialogInfo()
+        except:
+            info = wx.AboutDialogInfo()
 
         desc = ["\nScanMar_Logger\n",
                 "Platform Info: (%s,%s)",
@@ -1012,8 +1018,11 @@ class GraphFrame(wx.Frame):
                              "\n NWAFC, NL region-DFO, Gov. of Canada"])
         info.SetCopyright ("Note: See Source for any 3rd party credits")
 #        info.SetDescription (desc % (py_version, wx_info))
-        wx.adv.AboutBox(info)
-        
+        try:
+            wx.adv.AboutBox(info)
+        except:
+            wx.AboutBox(info)
+
 #******** END of GraphFrame ************************************************************
 
 ##############################################################################################
